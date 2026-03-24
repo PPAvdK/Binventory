@@ -17,7 +17,7 @@ exports.handler = async (event) => {
 
   const options = {
     hostname: 'api.todoist.com',
-    path: '/rest/v2' + path,
+    path: '/api/v1' + path,
     method: event.httpMethod,
     headers: {
       'Authorization': auth,
