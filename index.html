@@ -879,14 +879,16 @@ function renderScans() {
 //  TODOIST API  (officieel, CORS-vriendelijk!)
 // ════════════════════════════════════════════
 async function todoistGet(path) {
-  const r = await fetch(`${TODOIST}?path=${encodeURIComponent(path)}`, {
+  const r = await fetch(`${TODOIST}?path=${encodeURIComponent(path)}&token=${S.token}`, {
     headers: { 'Authorization': `Bearer ${S.token}` }
   });
-  return r.ok ? r.json() : null;
+  if (!r.ok) return null;
+  const d = await r.json();
+  return Array.isArray(d) ? d : (d.results || d.lists || d || null);
 }
 
 async function todoistPost(path, body) {
-  const r = await fetch(`${TODOIST}?path=${encodeURIComponent(path)}`, {
+  const r = await fetch(`${TODOIST}?path=${encodeURIComponent(path)}&token=${S.token}`, {
     method: 'POST',
     headers: {
       'Authorization': `Bearer ${S.token}`,
@@ -944,7 +946,7 @@ $('btn-connect').addEventListener('click', async () => {
   try {
     const controller = new AbortController();
     const tid = setTimeout(() => controller.abort(), 8000);
-    const r = await fetch('/api/listonic?path=' + encodeURIComponent('/projects'), {
+    const r = await fetch('/api/listonic?path=' + encodeURIComponent('/projects') + '&token=' + token, {
       headers: { 'Authorization': 'Bearer ' + token },
       signal: controller.signal
     });
@@ -962,6 +964,8 @@ $('btn-connect').addEventListener('click', async () => {
     return;
   }
 
+  // API geeft {results: [...]} terug
+  if (projects && projects.results) projects = projects.results;
   if (!projects || !projects.length) {
     showError('Geen projecten gevonden. Maak eerst een project aan in Todoist.');
     S.token = null;
