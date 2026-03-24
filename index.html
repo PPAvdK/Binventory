@@ -6,254 +6,819 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Listonic Scan">
-<meta name="theme-color" content="#0a0c10">
-<title>Listonic Scanner</title>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<meta name="apple-mobile-web-app-title" content="BinScan">
+<meta name="theme-color" content="#080a0f">
+<title>BinScan — Boodschappen Scanner</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Clash+Display:wght@600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script>
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-  :root {
-    --bg: #0a0c10; --surface: #12151c; --surface2: #1a1e28; --border: #252a38;
-    --green: #00e87a; --green-dim: rgba(0,232,122,0.12); --red: #ff4757;
-    --yellow: #ffd32a; --text: #e8edf5; --muted: #5a6178;
-    --font-display: 'Bebas Neue', sans-serif; --font-body: 'DM Sans', sans-serif;
-  }
-  html, body { background: var(--bg); color: var(--text); font-family: var(--font-body); height: 100%; overflow: hidden; position: fixed; width: 100%; }
-  #app { height: 100%; display: flex; flex-direction: column; overflow: hidden; }
-  .screen { display: none; flex-direction: column; height: 100%; overflow-y: auto; -webkit-overflow-scrolling: touch; }
-  .screen.active { display: flex; }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 
-  /* LOGIN */
-  #screen-login { background: var(--bg); align-items: center; justify-content: center; padding: 32px 24px; }
-  .login-logo { font-family: var(--font-display); font-size: 52px; letter-spacing: 3px; color: var(--green); line-height: 1; margin-bottom: 6px; }
-  .login-tagline { font-size: 13px; color: var(--muted); letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 48px; }
-  .login-card { background: var(--surface); border: 1px solid var(--border); border-radius: 24px; padding: 28px 24px; width: 100%; max-width: 360px; }
-  .login-card h2 { font-family: var(--font-display); font-size: 28px; letter-spacing: 1px; margin-bottom: 24px; }
-  .field { margin-bottom: 16px; }
-  .field label { display: block; font-size: 11px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
-  .field input { width: 100%; background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; font-family: var(--font-body); font-size: 15px; color: var(--text); outline: none; transition: border-color 0.2s; }
-  .field input:focus { border-color: var(--green); }
-  .btn-primary { width: 100%; background: var(--green); color: #000; border: none; border-radius: 14px; padding: 16px; font-family: var(--font-display); font-size: 20px; letter-spacing: 1.5px; cursor: pointer; margin-top: 8px; transition: opacity 0.15s, transform 0.1s; -webkit-appearance: none; }
-  .btn-primary:active { opacity: 0.85; transform: scale(0.98); }
-  .login-error { display: none; background: rgba(255,71,87,0.1); border: 1px solid rgba(255,71,87,0.3); border-radius: 10px; padding: 12px 14px; font-size: 13px; color: var(--red); margin-top: 12px; text-align: center; line-height: 1.5; }
+:root {
+  --bg: #080a0f;
+  --surface: #0f1218;
+  --surface2: #161b24;
+  --border: #1e2533;
+  --accent: #e8ff47;
+  --accent-dim: rgba(232,255,71,0.1);
+  --accent2: #47c5ff;
+  --red: #ff4757;
+  --text: #f0f4ff;
+  --muted: #4a5570;
+  --font-h: 'Syne', sans-serif;
+  --font-b: 'DM Sans', sans-serif;
+}
 
-  /* MAIN */
-  .topbar { display: flex; align-items: center; justify-content: space-between; padding: 54px 20px 16px; flex-shrink: 0; }
-  .topbar-brand { font-family: var(--font-display); font-size: 26px; letter-spacing: 2px; color: var(--green); }
-  .topbar-right { display: flex; align-items: center; gap: 12px; }
-  .list-selector { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 7px 12px; font-family: var(--font-body); font-size: 13px; color: var(--text); outline: none; max-width: 140px; -webkit-appearance: none; cursor: pointer; }
-  .btn-logout { background: none; border: 1px solid var(--border); border-radius: 10px; padding: 7px 10px; color: var(--muted); font-size: 16px; cursor: pointer; }
+html, body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-b);
+  height: 100%;
+  overflow: hidden;
+  position: fixed;
+  width: 100%;
+}
 
-  /* SCANNER */
-  .scanner-wrap { flex-shrink: 0; position: relative; margin: 0 16px; border-radius: 20px; overflow: hidden; background: #000; aspect-ratio: 4/3; }
-  #scanner-viewport { width: 100%; height: 100%; position: relative; overflow: hidden; }
-  #scanner-viewport video { width: 100% !important; height: 100% !important; object-fit: cover !important; }
-  #scanner-viewport canvas.drawingBuffer { display: none !important; }
-  .scan-overlay { position: absolute; inset: 0; pointer-events: none; display: flex; align-items: center; justify-content: center; }
-  .scan-frame { width: 65%; aspect-ratio: 2/1; position: relative; }
-  .scan-frame::before, .scan-frame::after, .scan-frame .corner-br, .scan-frame .corner-bl { content: ''; position: absolute; width: 22px; height: 22px; border-color: var(--green); border-style: solid; }
-  .scan-frame::before { top: 0; left: 0; border-width: 3px 0 0 3px; border-radius: 4px 0 0 0; }
-  .scan-frame::after  { top: 0; right: 0; border-width: 3px 3px 0 0; border-radius: 0 4px 0 0; }
-  .scan-frame .corner-br { bottom: 0; right: 0; border-width: 0 3px 3px 0; border-radius: 0 0 4px 0; }
-  .scan-frame .corner-bl { bottom: 0; left: 0; border-width: 0 0 3px 3px; border-radius: 0 0 0 4px; }
-  .scan-line { position: absolute; left: 4px; right: 4px; height: 2px; background: linear-gradient(90deg, transparent, var(--green), transparent); animation: scanline 2s ease-in-out infinite; box-shadow: 0 0 8px var(--green); }
-  @keyframes scanline { 0% { top: 8px; } 50% { top: calc(100% - 8px); } 100% { top: 8px; } }
-  .scanner-status { position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.65); backdrop-filter: blur(6px); border-radius: 100px; padding: 6px 14px; font-size: 12px; color: var(--green); font-weight: 500; white-space: nowrap; }
-  .scanner-placeholder { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; background: var(--surface); }
-  .placeholder-icon { font-size: 40px; opacity: 0.4; }
-  .placeholder-text { font-size: 13px; color: var(--muted); }
+/* Subtle noise texture overlay */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 999;
+  opacity: 0.4;
+}
 
-  /* SCAN BUTTON */
-  .scan-btn-wrap { padding: 16px; flex-shrink: 0; }
-  .btn-scan { width: 100%; background: var(--green); color: #000; border: none; border-radius: 16px; padding: 18px; font-family: var(--font-display); font-size: 22px; letter-spacing: 2px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; transition: opacity 0.15s, transform 0.1s; -webkit-appearance: none; }
-  .btn-scan.scanning { background: var(--red); color: #fff; }
-  .btn-scan:active { opacity: 0.85; transform: scale(0.99); }
+#app {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
 
-  /* TOAST */
-  .toast { position: fixed; bottom: 0; left: 0; right: 0; background: var(--surface); border-top: 1px solid var(--border); padding: 16px 20px 32px; transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); z-index: 100; border-radius: 24px 24px 0 0; }
-  .toast.show { transform: translateY(0); }
-  .toast-inner { display: flex; align-items: center; gap: 14px; }
-  .toast-icon { width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; }
-  .toast-icon.success { background: var(--green-dim); }
-  .toast-icon.error   { background: rgba(255,71,87,0.12); }
-  .toast-icon.loading { background: rgba(255,211,42,0.12); }
-  .toast-content { flex: 1; min-width: 0; }
-  .toast-title { font-weight: 600; font-size: 15px; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .toast-sub { font-size: 12px; color: var(--muted); }
+.screen {
+  display: none;
+  flex-direction: column;
+  height: 100%;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.screen.active { display: flex; }
 
-  /* RECENTS */
-  .recents-header { display: flex; align-items: center; justify-content: space-between; padding: 8px 20px 10px; flex-shrink: 0; }
-  .recents-title { font-size: 11px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); }
-  .recents-clear { font-size: 12px; color: var(--muted); background: none; border: none; cursor: pointer; padding: 4px 8px; }
-  .recents-list { flex: 1; overflow-y: auto; padding: 0 16px 24px; -webkit-overflow-scrolling: touch; }
-  .scan-item { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 13px 16px; margin-bottom: 10px; display: flex; align-items: center; gap: 12px; animation: slideIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) both; }
-  @keyframes slideIn { from { opacity: 0; transform: translateY(10px) scale(0.97); } to { opacity: 1; transform: none; } }
-  .scan-item-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-  .scan-item-dot.ok  { background: var(--green); box-shadow: 0 0 6px var(--green); }
-  .scan-item-dot.err { background: var(--red); }
-  .scan-item-name { flex: 1; font-size: 14px; font-weight: 500; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .scan-item-time { font-size: 11px; color: var(--muted); flex-shrink: 0; }
-  .empty-state { text-align: center; padding: 32px 20px; color: var(--muted); }
-  .empty-icon { font-size: 36px; margin-bottom: 10px; opacity: 0.4; }
-  .empty-text { font-size: 13px; }
+/* ══════════════════════════════════════
+   SETUP SCREEN (API token invoeren)
+══════════════════════════════════════ */
+#screen-setup {
+  align-items: center;
+  justify-content: center;
+  padding: 32px 24px;
+  background: var(--bg);
+}
 
-  /* MODAL */
-  .modal-backdrop { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); z-index: 200; align-items: flex-end; }
-  .modal-backdrop.open { display: flex; }
-  .modal { background: var(--surface); border: 1px solid var(--border); border-radius: 24px 24px 0 0; padding: 24px 20px 40px; width: 100%; animation: modalUp 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) both; }
-  @keyframes modalUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
-  .modal h3 { font-family: var(--font-display); font-size: 24px; margin-bottom: 6px; }
-  .modal p { font-size: 13px; color: var(--muted); margin-bottom: 20px; line-height: 1.6; }
-  .modal-barcode { font-family: monospace; font-size: 13px; color: var(--yellow); background: rgba(255,211,42,0.08); border-radius: 6px; padding: 2px 8px; }
-  .modal-actions { display: flex; gap: 10px; margin-top: 16px; }
-  .btn-secondary { flex: 1; background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; padding: 14px; font-family: var(--font-body); font-size: 14px; color: var(--text); cursor: pointer; -webkit-appearance: none; }
-  .btn-confirm { flex: 1; background: var(--green); border: none; border-radius: 12px; padding: 14px; font-family: var(--font-display); font-size: 18px; letter-spacing: 1px; color: #000; cursor: pointer; -webkit-appearance: none; }
-  .spinner { width: 18px; height: 18px; border: 2px solid rgba(255,211,42,0.3); border-top-color: var(--yellow); border-radius: 50%; animation: spin 0.7s linear infinite; display: inline-block; }
-  @keyframes spin { to { transform: rotate(360deg); } }
+.setup-logo {
+  font-family: var(--font-h);
+  font-size: 58px;
+  font-weight: 800;
+  letter-spacing: -2px;
+  line-height: 1;
+  margin-bottom: 4px;
+  position: relative;
+}
+
+.setup-logo span.accent { color: var(--accent); }
+
+.setup-sub {
+  font-size: 12px;
+  color: var(--muted);
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin-bottom: 44px;
+}
+
+.setup-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  padding: 28px 24px 32px;
+  width: 100%;
+  max-width: 380px;
+}
+
+.setup-card h2 {
+  font-family: var(--font-h);
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.setup-card p {
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.7;
+  margin-bottom: 24px;
+}
+
+.setup-card a {
+  color: var(--accent2);
+  text-decoration: none;
+}
+
+.field { margin-bottom: 16px; }
+
+.field label {
+  display: block;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+
+.field input, .field select {
+  width: 100%;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 14px 16px;
+  font-family: var(--font-b);
+  font-size: 14px;
+  color: var(--text);
+  outline: none;
+  transition: border-color 0.2s;
+  -webkit-appearance: none;
+}
+
+.field input:focus, .field select:focus {
+  border-color: var(--accent);
+}
+
+.field input::placeholder { color: var(--muted); }
+
+.btn-main {
+  width: 100%;
+  background: var(--accent);
+  color: #000;
+  border: none;
+  border-radius: 14px;
+  padding: 16px;
+  font-family: var(--font-h);
+  font-size: 19px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  cursor: pointer;
+  margin-top: 4px;
+  transition: opacity 0.15s, transform 0.1s;
+  -webkit-appearance: none;
+}
+
+.btn-main:active { opacity: 0.85; transform: scale(0.98); }
+.btn-main:disabled { opacity: 0.4; }
+
+.setup-error {
+  display: none;
+  background: rgba(255,71,87,0.08);
+  border: 1px solid rgba(255,71,87,0.25);
+  border-radius: 10px;
+  padding: 12px 14px;
+  font-size: 13px;
+  color: var(--red);
+  margin-top: 14px;
+  text-align: center;
+  line-height: 1.5;
+}
+
+.step-hint {
+  background: var(--accent-dim);
+  border: 1px solid rgba(232,255,71,0.2);
+  border-radius: 10px;
+  padding: 12px 14px;
+  font-size: 12px;
+  color: var(--accent);
+  line-height: 1.7;
+  margin-bottom: 20px;
+}
+
+.step-hint strong { display: block; margin-bottom: 2px; font-size: 11px; letter-spacing: 1px; text-transform: uppercase; }
+
+/* ══════════════════════════════════════
+   MAIN SCREEN
+══════════════════════════════════════ */
+#screen-main { background: var(--bg); }
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 52px 20px 14px;
+  flex-shrink: 0;
+}
+
+.topbar-left { display: flex; flex-direction: column; gap: 2px; }
+
+.topbar-brand {
+  font-family: var(--font-h);
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+}
+
+.topbar-brand span { color: var(--accent); }
+
+.topbar-project {
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: 0.5px;
+}
+
+.topbar-right { display: flex; align-items: center; gap: 10px; }
+
+.btn-settings {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 9px 12px;
+  color: var(--muted);
+  font-size: 16px;
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s;
+  line-height: 1;
+}
+
+.btn-settings:active { border-color: var(--accent); color: var(--accent); }
+
+/* Scanner */
+.scanner-wrap {
+  flex-shrink: 0;
+  position: relative;
+  margin: 0 16px;
+  border-radius: 22px;
+  overflow: hidden;
+  background: #000;
+  aspect-ratio: 4/3;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.6);
+}
+
+#scanner-viewport {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+#scanner-viewport video {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+}
+
+#scanner-viewport canvas.drawingBuffer { display: none !important; }
+
+.scan-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+/* Corner brackets */
+.bracket {
+  position: absolute;
+  width: 28px;
+  height: 28px;
+  border-color: var(--accent);
+  border-style: solid;
+  opacity: 0.9;
+}
+.bracket.tl { top: 20px; left: 20px; border-width: 3px 0 0 3px; border-radius: 6px 0 0 0; }
+.bracket.tr { top: 20px; right: 20px; border-width: 3px 3px 0 0; border-radius: 0 6px 0 0; }
+.bracket.bl { bottom: 20px; left: 20px; border-width: 0 0 3px 3px; border-radius: 0 0 0 6px; }
+.bracket.br { bottom: 20px; right: 20px; border-width: 0 3px 3px 0; border-radius: 0 0 6px 0; }
+
+/* Scan line */
+.scan-line {
+  position: absolute;
+  left: 20px; right: 20px;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  box-shadow: 0 0 12px var(--accent);
+  animation: sweep 2.2s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+  display: none;
+}
+
+@keyframes sweep {
+  0%   { top: 20px; opacity: 0; }
+  10%  { opacity: 1; }
+  90%  { opacity: 1; }
+  100% { top: calc(100% - 20px); opacity: 0; }
+}
+
+.scanner-placeholder {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  background: var(--surface);
+}
+
+.placeholder-rings {
+  position: relative;
+  width: 64px; height: 64px;
+  display: flex; align-items: center; justify-content: center;
+}
+
+.placeholder-rings::before,
+.placeholder-rings::after {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+  border: 2px solid var(--muted);
+  opacity: 0.3;
+}
+
+.placeholder-rings::before { width: 64px; height: 64px; }
+.placeholder-rings::after { width: 44px; height: 44px; }
+.placeholder-icon { font-size: 24px; position: relative; z-index: 1; }
+.placeholder-text { font-size: 13px; color: var(--muted); }
+
+/* Status pill */
+.scanner-pill {
+  position: absolute;
+  bottom: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(8,10,15,0.8);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  padding: 6px 16px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--accent);
+  white-space: nowrap;
+  display: none;
+}
+
+/* Scan button */
+.scan-btn-area {
+  padding: 14px 16px 10px;
+  flex-shrink: 0;
+}
+
+.btn-scan {
+  width: 100%;
+  background: var(--accent);
+  color: #000;
+  border: none;
+  border-radius: 18px;
+  padding: 17px;
+  font-family: var(--font-h);
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: opacity 0.15s, transform 0.1s;
+  -webkit-appearance: none;
+}
+
+.btn-scan.active {
+  background: var(--red);
+  color: #fff;
+}
+
+.btn-scan:active { opacity: 0.85; transform: scale(0.99); }
+
+/* Stats row */
+.stats-row {
+  display: flex;
+  gap: 10px;
+  padding: 0 16px 10px;
+  flex-shrink: 0;
+}
+
+.stat-chip {
+  flex: 1;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 10px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.stat-num {
+  font-family: var(--font-h);
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.stat-label {
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+/* Recents */
+.recents-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 20px 10px;
+  flex-shrink: 0;
+}
+
+.recents-title {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.recents-clear {
+  font-size: 12px;
+  color: var(--muted);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px 8px;
+  font-family: var(--font-b);
+}
+
+.recents-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0 16px 32px;
+  -webkit-overflow-scrolling: touch;
+}
+
+.scan-item {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 12px 16px;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  animation: popIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+@keyframes popIn {
+  from { opacity: 0; transform: translateY(8px) scale(0.97); }
+  to   { opacity: 1; transform: none; }
+}
+
+.scan-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.scan-dot.ok  { background: var(--accent); box-shadow: 0 0 8px var(--accent); }
+.scan-dot.err { background: var(--red); }
+
+.scan-name {
+  flex: 1;
+  font-size: 14px;
+  font-weight: 500;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.scan-time {
+  font-size: 11px;
+  color: var(--muted);
+  flex-shrink: 0;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 28px 20px;
+  color: var(--muted);
+}
+
+.empty-icon { font-size: 32px; margin-bottom: 8px; opacity: 0.35; }
+.empty-text { font-size: 13px; }
+
+/* ══════════════════════════════════════
+   TOAST
+══════════════════════════════════════ */
+.toast {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  padding: 16px 20px 34px;
+  transform: translateY(100%);
+  transition: transform 0.32s cubic-bezier(0.34, 1.4, 0.64, 1);
+  z-index: 500;
+  border-radius: 24px 24px 0 0;
+}
+
+.toast.show { transform: translateY(0); }
+
+.toast-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.toast-icon {
+  width: 46px; height: 46px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  flex-shrink: 0;
+}
+
+.toast-icon.ok  { background: var(--accent-dim); }
+.toast-icon.err { background: rgba(255,71,87,0.1); }
+.toast-icon.loading { background: rgba(71,197,255,0.1); }
+
+.toast-body { flex: 1; min-width: 0; }
+.toast-title { font-weight: 600; font-size: 15px; margin-bottom: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.toast-sub   { font-size: 12px; color: var(--muted); }
+
+.spinner {
+  width: 20px; height: 20px;
+  border: 2px solid rgba(71,197,255,0.25);
+  border-top-color: var(--accent2);
+  border-radius: 50%;
+  animation: spin 0.65s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ══════════════════════════════════════
+   MODAL (manual input)
+══════════════════════════════════════ */
+.modal-bg {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.75);
+  backdrop-filter: blur(6px);
+  z-index: 600;
+  align-items: flex-end;
+}
+
+.modal-bg.open { display: flex; }
+
+.modal {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 26px 26px 0 0;
+  padding: 26px 20px 42px;
+  width: 100%;
+  animation: slideUp 0.32s cubic-bezier(0.34, 1.4, 0.64, 1) both;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(100%); }
+  to   { transform: translateY(0); }
+}
+
+.modal-tag {
+  display: inline-block;
+  background: rgba(255,71,87,0.1);
+  color: var(--red);
+  border: 1px solid rgba(255,71,87,0.2);
+  border-radius: 100px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 4px 12px;
+  margin-bottom: 12px;
+}
+
+.modal h3 {
+  font-family: var(--font-h);
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.modal-desc {
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+
+.modal-code {
+  font-family: monospace;
+  font-size: 12px;
+  background: rgba(232,255,71,0.08);
+  color: var(--accent);
+  border-radius: 6px;
+  padding: 2px 8px;
+}
+
+.modal-btns {
+  display: flex;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.btn-ghost {
+  flex: 1;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 14px;
+  font-family: var(--font-b);
+  font-size: 14px;
+  color: var(--text);
+  cursor: pointer;
+  -webkit-appearance: none;
+}
+
+.btn-add {
+  flex: 2;
+  background: var(--accent);
+  border: none;
+  border-radius: 14px;
+  padding: 14px;
+  font-family: var(--font-h);
+  font-size: 18px;
+  font-weight: 700;
+  color: #000;
+  cursor: pointer;
+  -webkit-appearance: none;
+}
 </style>
 </head>
 <body>
 <div id="app">
 
-  <div id="screen-login" class="screen active">
-    <div class="login-logo">SCAN</div>
-    <div class="login-tagline">voor Listonic</div>
-    <div class="login-card">
-      <h2>Inloggen</h2>
-      <div class="field">
-        <label>E-mailadres</label>
-        <input type="email" id="input-email" placeholder="jouw@email.com" autocomplete="email">
+  <!-- ══════════ SETUP SCREEN ══════════ -->
+  <div id="screen-setup" class="screen active">
+    <div class="setup-logo">Bin<span class="accent">Scan</span></div>
+    <div class="setup-sub">Boodschappen scanner</div>
+
+    <div class="setup-card">
+      <h2>Koppel Todoist</h2>
+
+      <div class="step-hint">
+        <strong>📋 Hoe kom je aan je token?</strong>
+        1. Ga naar <a href="https://app.todoist.com/app/settings/integrations/developer" target="_blank">todoist.com → Instellingen → Integraties</a><br>
+        2. Scroll naar beneden → kopieer je <strong>API token</strong>
       </div>
+
       <div class="field">
-        <label>Wachtwoord</label>
-        <input type="password" id="input-password" placeholder="••••••••" autocomplete="current-password">
+        <label>Todoist API Token</label>
+        <input type="text" id="input-token" placeholder="Plak hier je token..." autocomplete="off" spellcheck="false">
       </div>
-      <button class="btn-primary" id="btn-login">INLOGGEN</button>
-      <div class="login-error" id="login-error"></div>
+
+      <button class="btn-main" id="btn-connect">VERBINDEN →</button>
+
+      <div class="setup-error" id="setup-error"></div>
     </div>
   </div>
 
+  <!-- ══════════ MAIN SCREEN ══════════ -->
   <div id="screen-main" class="screen">
+
     <div class="topbar">
-      <div class="topbar-brand">SCAN</div>
+      <div class="topbar-left">
+        <div class="topbar-brand">Bin<span>Scan</span></div>
+        <div class="topbar-project" id="topbar-project">laden...</div>
+      </div>
       <div class="topbar-right">
-        <select class="list-selector" id="list-selector"><option>Laden...</option></select>
-        <button class="btn-logout" id="btn-logout">↩</button>
+        <select class="field" id="project-select" style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:8px 12px;font-size:13px;color:var(--text);max-width:130px;margin:0;">
+          <option>Laden...</option>
+        </select>
+        <button class="btn-settings" id="btn-logout" title="Uitloggen">↩</button>
       </div>
     </div>
 
+    <!-- Camera -->
     <div class="scanner-wrap">
       <div id="scanner-viewport">
-        <div class="scanner-placeholder" id="scanner-placeholder">
-          <div class="placeholder-icon">📷</div>
-          <div class="placeholder-text">Druk op START SCANNEN</div>
+        <div class="scanner-placeholder" id="placeholder">
+          <div class="placeholder-rings">
+            <div class="placeholder-icon">📷</div>
+          </div>
+          <div class="placeholder-text">Druk START om te scannen</div>
         </div>
       </div>
       <div class="scan-overlay">
-        <div class="scan-frame">
-          <div class="corner-br"></div>
-          <div class="corner-bl"></div>
-          <div class="scan-line" id="scan-line" style="display:none"></div>
-        </div>
+        <div class="bracket tl"></div>
+        <div class="bracket tr"></div>
+        <div class="bracket bl"></div>
+        <div class="bracket br"></div>
+        <div class="scan-line" id="scan-line"></div>
       </div>
-      <div class="scanner-status" id="scanner-status" style="display:none">🟢 Klaar om te scannen</div>
+      <div class="scanner-pill" id="scanner-pill">🟢 Scannen actief</div>
     </div>
 
-    <div class="scan-btn-wrap">
+    <!-- Scan button -->
+    <div class="scan-btn-area">
       <button class="btn-scan" id="btn-scan">
         <span id="btn-icon">📷</span>
-        <span id="btn-scan-text">START SCANNEN</span>
+        <span id="btn-text">START SCANNEN</span>
       </button>
     </div>
 
+    <!-- Stats -->
+    <div class="stats-row">
+      <div class="stat-chip">
+        <div class="stat-num" id="stat-today">0</div>
+        <div class="stat-label">Vandaag</div>
+      </div>
+      <div class="stat-chip">
+        <div class="stat-num" id="stat-total">0</div>
+        <div class="stat-label">Totaal</div>
+      </div>
+      <div class="stat-chip">
+        <div class="stat-num" id="stat-project">—</div>
+        <div class="stat-label">Lijst</div>
+      </div>
+    </div>
+
+    <!-- Recents -->
     <div class="recents-header">
-      <div class="recents-title">Gescand vandaag</div>
+      <div class="recents-title">Gescand</div>
       <button class="recents-clear" id="btn-clear">Wis alles</button>
     </div>
     <div class="recents-list" id="recents-list"></div>
   </div>
+
 </div>
 
+<!-- Toast -->
 <div class="toast" id="toast">
-  <div class="toast-inner">
-    <div class="toast-icon" id="toast-icon"></div>
-    <div class="toast-content">
-      <div class="toast-title" id="toast-title"></div>
-      <div class="toast-sub" id="toast-sub"></div>
+  <div class="toast-row">
+    <div class="toast-icon" id="ti"></div>
+    <div class="toast-body">
+      <div class="toast-title" id="tt"></div>
+      <div class="toast-sub"   id="ts"></div>
     </div>
   </div>
 </div>
 
-<div class="modal-backdrop" id="modal">
+<!-- Modal -->
+<div class="modal-bg" id="modal">
   <div class="modal">
-    <h3>Niet gevonden</h3>
-    <p>Barcode <span class="modal-barcode" id="modal-barcode"></span> staat niet in de database. Voer de naam in:</p>
+    <div class="modal-tag">Niet gevonden</div>
+    <h3>Voer naam in</h3>
+    <p class="modal-desc">Barcode <span class="modal-code" id="modal-code"></span> staat niet in de database. Typ de productnaam:</p>
     <div class="field">
-      <input type="text" id="modal-input" placeholder="bijv. Halfvolle melk">
+      <input type="text" id="modal-input" placeholder="bijv. Halfvolle melk AH">
     </div>
-    <div class="modal-actions">
-      <button class="btn-secondary" id="modal-cancel">Overslaan</button>
-      <button class="btn-confirm" id="modal-confirm">TOEVOEGEN</button>
+    <div class="modal-btns">
+      <button class="btn-ghost" id="modal-skip">Overslaan</button>
+      <button class="btn-add"   id="modal-add">TOEVOEGEN</button>
     </div>
   </div>
 </div>
 
 <script>
-// ── PROXY URL ──────────────────────────────────────────
-// Publieke CORS proxy — werkt overal zonder server setup
-const LISTONIC_BASE = 'https://corsproxy.io/?url=https://api.listonic.com';
+// ════════════════════════════════════════════
+//  CONFIG & STATE
+// ════════════════════════════════════════════
+const TODOIST = '/api/listonic';
 
-// ── STATE ──────────────────────────────────────────────
-const state = {
-  token: localStorage.getItem('lsc_token'),
-  lists: [],
-  selectedListId: localStorage.getItem('lsc_list'),
-  scanning: false,
-  scans: JSON.parse(localStorage.getItem('lsc_scans') || '[]'),
-  pendingBarcode: null,
-  cooldown: false
+const S = {
+  token:     localStorage.getItem('bs_token'),
+  projectId: localStorage.getItem('bs_project'),
+  scans:     JSON.parse(localStorage.getItem('bs_scans') || '[]'),
+  todayCount: 0,
+  scanning:  false,
+  cooldown:  false,
+  pendingCode: null,
+  projects: []
 };
 
-// ── HELPERS ────────────────────────────────────────────
+// ════════════════════════════════════════════
+//  UTILS
+// ════════════════════════════════════════════
 const $ = id => document.getElementById(id);
-
-function showToast(type, title, sub) {
-  const icons = { success: '✅', error: '❌', loading: '<div class="spinner"></div>' };
-  const cls   = { success: 'success', error: 'error', loading: 'loading' };
-  $('toast-icon').className = `toast-icon ${cls[type]}`;
-  $('toast-icon').innerHTML = icons[type];
-  $('toast-title').textContent = title;
-  $('toast-sub').textContent = sub || '';
-  $('toast').classList.add('show');
-  if (type !== 'loading') setTimeout(() => $('toast').classList.remove('show'), 3000);
-}
-function hideToast() { $('toast').classList.remove('show'); }
 
 function timeNow() {
   const d = new Date();
   return `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
 }
 
-function addScan(name, ok) {
-  state.scans.unshift({ name, ok, time: timeNow() });
-  if (state.scans.length > 30) state.scans.pop();
-  localStorage.setItem('lsc_scans', JSON.stringify(state.scans));
-  renderRecents();
-}
-
-function renderRecents() {
-  const el = $('recents-list');
-  if (!state.scans.length) {
-    el.innerHTML = `<div class="empty-state"><div class="empty-icon">🛒</div><div class="empty-text">Nog niets gescand</div></div>`;
-    return;
-  }
-  el.innerHTML = state.scans.map(s => `
-    <div class="scan-item">
-      <div class="scan-item-dot ${s.ok ? 'ok' : 'err'}"></div>
-      <div class="scan-item-name">${s.name}</div>
-      <div class="scan-item-time">${s.time}</div>
-    </div>`).join('');
+function dateKey() {
+  return new Date().toDateString();
 }
 
 function showScreen(id) {
@@ -261,37 +826,94 @@ function showScreen(id) {
   $(id).classList.add('active');
 }
 
-// ── LISTONIC API via CORS proxy ─────────────────────────
-async function listonicFetch(path, method = 'GET', body = null, token = null) {
-  const headers = { 'Content-Type': 'application/json' };
-  if (token) headers['Authorization'] = `Bearer ${token}`;
-  const opts = { method, headers };
-  if (body) opts.body = JSON.stringify(body);
+function toast(type, title, sub) {
+  const icons = {
+    ok:      '✅',
+    err:     '❌',
+    loading: '<div class="spinner"></div>'
+  };
+  $('ti').className = `toast-icon ${type}`;
+  $('ti').innerHTML = icons[type];
+  $('tt').textContent = title;
+  $('ts').textContent = sub || '';
+  $('toast').classList.add('show');
+  if (type !== 'loading') {
+    setTimeout(() => $('toast').classList.remove('show'), 3200);
+  }
+}
+
+function hideToast() { $('toast').classList.remove('show'); }
+
+function saveScan(name, ok) {
+  S.scans.unshift({ name, ok, time: timeNow(), date: dateKey() });
+  if (S.scans.length > 50) S.scans.pop();
+  localStorage.setItem('bs_scans', JSON.stringify(S.scans));
+  updateStats();
+  renderScans();
+}
+
+function updateStats() {
+  const today = S.scans.filter(s => s.date === dateKey()).length;
+  $('stat-today').textContent = today;
+  $('stat-total').textContent = S.scans.length;
+  const proj = S.projects.find(p => p.id === S.projectId);
+  const name = proj?.name || '—';
+  $('stat-project').textContent = name.length > 5 ? name.slice(0,5)+'…' : name;
+}
+
+function renderScans() {
+  const el = $('recents-list');
+  if (!S.scans.length) {
+    el.innerHTML = `<div class="empty-state"><div class="empty-icon">🛒</div><div class="empty-text">Nog niets gescand</div></div>`;
+    return;
+  }
+  el.innerHTML = S.scans.map(s => `
+    <div class="scan-item">
+      <div class="scan-dot ${s.ok ? 'ok' : 'err'}"></div>
+      <div class="scan-name">${s.name}</div>
+      <div class="scan-time">${s.time}</div>
+    </div>`).join('');
+}
+
+// ════════════════════════════════════════════
+//  TODOIST API  (officieel, CORS-vriendelijk!)
+// ════════════════════════════════════════════
+async function todoistGet(path) {
+  const r = await fetch(`${TODOIST}?path=${encodeURIComponent(path)}`, {
+    headers: { 'Authorization': `Bearer ${S.token}` }
+  });
+  return r.ok ? r.json() : null;
+}
+
+async function todoistPost(path, body) {
+  const r = await fetch(`${TODOIST}?path=${encodeURIComponent(path)}`, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${S.token}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(body)
+  });
+  return r.ok;
+}
+
+async function getProjects() {
+  return await todoistGet('/projects') || [];
+}
+
+async function addTask(content, projectId) {
+  return await todoistPost('/tasks', {
+    content,
+    project_id: projectId
+  });
+}
+
+// ════════════════════════════════════════════
+//  OPEN FOOD FACTS
+// ════════════════════════════════════════════
+async function lookupBarcode(code) {
   try {
-    const r = await fetch(`${LISTONIC_BASE}${path}`, opts);
-    return r.ok ? await r.json() : null;
-  } catch(e) { return null; }
-}
-
-async function listonicLogin(email, password) {
-  const data = await listonicFetch('/v3/user/login', 'POST', { email, password });
-  return data?.token || data?.access_token || null;
-}
-
-async function listonicGetLists(token) {
-  const data = await listonicFetch('/v3/lists', 'GET', null, token);
-  return Array.isArray(data) ? data : (data?.lists || []);
-}
-
-async function listonicAddItem(token, listId, name) {
-  const data = await listonicFetch(`/v3/lists/${listId}/items`, 'POST', { name }, token);
-  return data !== null;
-}
-
-// ── OPEN FOOD FACTS ────────────────────────────────────
-async function lookupBarcode(barcode) {
-  try {
-    const r = await fetch(`https://world.openfoodfacts.org/api/v0/product/${barcode}.json`);
+    const r = await fetch(`https://world.openfoodfacts.org/api/v0/product/${code}.json`);
     const d = await r.json();
     if (d.status !== 1) return null;
     const p = d.product;
@@ -302,188 +924,271 @@ async function lookupBarcode(barcode) {
   } catch { return null; }
 }
 
-// ── LOGIN ──────────────────────────────────────────────
-$('btn-login').addEventListener('click', async () => {
-  const email = $('input-email').value.trim();
-  const pw    = $('input-password').value;
-  $('login-error').style.display = 'none';
+// ════════════════════════════════════════════
+//  SETUP SCREEN
+// ════════════════════════════════════════════
+$('btn-connect').addEventListener('click', async () => {
+  const token = $('input-token').value.trim();
+  $('setup-error').style.display = 'none';
 
-  if (!email || !pw) {
-    $('login-error').textContent = 'Vul je e-mail en wachtwoord in.';
-    $('login-error').style.display = 'block';
+  if (!token || token.length < 10) {
+    showError('Plak je API token in het veld hierboven.');
     return;
   }
 
-  $('btn-login').textContent = 'BEZIG...';
-  $('btn-login').disabled = true;
+  $('btn-connect').textContent = 'VERBINDEN...';
+  $('btn-connect').disabled = true;
+  S.token = token;
 
+  let projects = null;
   try {
-    const token = await listonicLogin(email, pw);
-    if (!token) throw new Error('Geen token ontvangen');
-
-    state.token = token;
-    localStorage.setItem('lsc_token', token);
-    await loadLists();
-    renderRecents();
-    showScreen('screen-main');
+    const controller = new AbortController();
+    const tid = setTimeout(() => controller.abort(), 8000);
+    const r = await fetch('/api/listonic?path=' + encodeURIComponent('/projects'), {
+      headers: { 'Authorization': 'Bearer ' + token },
+      signal: controller.signal
+    });
+    clearTimeout(tid);
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    projects = await r.json();
   } catch(e) {
-    $('login-error').textContent = 'Inloggen mislukt. Controleer je gegevens en internetverbinding.';
-    $('login-error').style.display = 'block';
-  }
-
-  $('btn-login').textContent = 'INLOGGEN';
-  $('btn-login').disabled = false;
-});
-
-$('input-password').addEventListener('keydown', e => { if (e.key === 'Enter') $('btn-login').click(); });
-
-$('btn-logout').addEventListener('click', () => {
-  stopScanner();
-  localStorage.removeItem('lsc_token');
-  state.token = null;
-  showScreen('screen-login');
-});
-
-// ── LISTS ──────────────────────────────────────────────
-async function loadLists() {
-  const lists = await listonicGetLists(state.token);
-  state.lists = lists;
-  const sel = $('list-selector');
-
-  if (!lists.length) {
-    sel.innerHTML = '<option>Geen lijsten gevonden</option>';
+    let msg = 'Verbindingsfout. Controleer je token en internet.';
+    if (e.name === 'AbortError') msg = 'Verbinding duurt te lang. Probeer opnieuw.';
+    if (e.message.includes('401') || e.message.includes('403')) msg = 'Token niet geldig. Kopieer je token opnieuw van todoist.com → Instellingen → Integraties.';
+    showError(msg);
+    S.token = null;
+    $('btn-connect').textContent = 'VERBINDEN →';
+    $('btn-connect').disabled = false;
     return;
   }
 
-  sel.innerHTML = lists.map(l => {
-    const id   = l.id || l.listId || l._id;
-    const name = l.name || l.title || 'Lijst';
-    return `<option value="${id}" ${id === state.selectedListId ? 'selected' : ''}>${name}</option>`;
-  }).join('');
-
-  if (!state.selectedListId) {
-    state.selectedListId = lists[0].id || lists[0].listId;
-    localStorage.setItem('lsc_list', state.selectedListId);
+  if (!projects || !projects.length) {
+    showError('Geen projecten gevonden. Maak eerst een project aan in Todoist.');
+    S.token = null;
+    $('btn-connect').textContent = 'VERBINDEN →';
+    $('btn-connect').disabled = false;
+    return;
   }
+
+  localStorage.setItem('bs_token', token);
+  S.projects = projects;
+  if (!S.projectId) {
+    S.projectId = projects[0].id;
+    localStorage.setItem('bs_project', S.projectId);
+  }
+
+  loadProjectSelect();
+  updateStats();
+  renderScans();
+  showScreen('screen-main');
+
+  $('btn-connect').textContent = 'VERBINDEN →';
+  $('btn-connect').disabled = false;
+});
+
+$('input-token').addEventListener('keydown', e => {
+  if (e.key === 'Enter') $('btn-connect').click();
+});
+
+function showError(msg) {
+  $('setup-error').textContent = msg;
+  $('setup-error').style.display = 'block';
 }
 
-$('list-selector').addEventListener('change', e => {
-  state.selectedListId = e.target.value;
-  localStorage.setItem('lsc_list', state.selectedListId);
+// ════════════════════════════════════════════
+//  PROJECT SELECT
+// ════════════════════════════════════════════
+function loadProjectSelect() {
+  const sel = $('project-select');
+  sel.innerHTML = S.projects.map(p =>
+    `<option value="${p.id}" ${p.id === S.projectId ? 'selected' : ''}>${p.name}</option>`
+  ).join('');
+  updateProjectLabel();
+}
+
+function updateProjectLabel() {
+  const proj = S.projects.find(p => p.id === S.projectId);
+  $('topbar-project').textContent = proj ? `→ ${proj.name}` : '';
+  updateStats();
+}
+
+$('project-select').addEventListener('change', e => {
+  S.projectId = e.target.value;
+  localStorage.setItem('bs_project', S.projectId);
+  updateProjectLabel();
 });
 
-// ── SCANNER ────────────────────────────────────────────
+// ════════════════════════════════════════════
+//  LOGOUT
+// ════════════════════════════════════════════
+$('btn-logout').addEventListener('click', () => {
+  stopScanner();
+  localStorage.removeItem('bs_token');
+  localStorage.removeItem('bs_project');
+  S.token = null;
+  S.projectId = null;
+  showScreen('screen-setup');
+});
+
+// ════════════════════════════════════════════
+//  SCANNER
+// ════════════════════════════════════════════
 function startScanner() {
-  $('scanner-placeholder').style.display = 'none';
+  $('placeholder').style.display = 'none';
   $('scan-line').style.display = 'block';
-  $('scanner-status').style.display = 'block';
+  $('scanner-pill').style.display = 'block';
 
   Quagga.init({
     inputStream: {
       type: 'LiveStream',
       target: $('scanner-viewport'),
-      constraints: { facingMode: 'environment', width: { ideal: 1280 }, height: { ideal: 720 } }
+      constraints: {
+        facingMode: 'environment',
+        width: { ideal: 1280 },
+        height: { ideal: 720 }
+      }
     },
-    decoder: { readers: ['ean_reader', 'ean_8_reader', 'upc_reader', 'code_128_reader'] },
-    locate: true, frequency: 10
+    decoder: {
+      readers: ['ean_reader', 'ean_8_reader', 'upc_reader', 'upc_e_reader', 'code_128_reader']
+    },
+    locate: true,
+    frequency: 8
   }, err => {
     if (err) {
-      showToast('error', 'Camera niet beschikbaar', 'Geef cameratoestemming in je browser');
+      toast('err', 'Camera geblokkeerd', 'Geef cameratoestemming in je browser');
       stopScanner();
       return;
     }
     Quagga.start();
-    state.scanning = true;
-    updateBtn();
+    S.scanning = true;
+    updateScanBtn();
   });
 
-  Quagga.onDetected(onBarcode);
+  Quagga.onDetected(handleBarcode);
 }
 
 function stopScanner() {
-  try { Quagga.offDetected(onBarcode); Quagga.stop(); } catch(e) {}
-  state.scanning = false;
+  try { Quagga.offDetected(handleBarcode); Quagga.stop(); } catch(e) {}
+  S.scanning = false;
   $('scan-line').style.display = 'none';
-  $('scanner-status').style.display = 'none';
-  $('scanner-placeholder').style.display = 'flex';
-  updateBtn();
+  $('scanner-pill').style.display = 'none';
+  $('placeholder').style.display = 'flex';
+  updateScanBtn();
 }
 
-function updateBtn() {
+function updateScanBtn() {
   const btn = $('btn-scan');
-  if (state.scanning) {
-    btn.classList.add('scanning');
-    $('btn-scan-text').textContent = 'STOP SCANNEN';
+  if (S.scanning) {
+    btn.classList.add('active');
     $('btn-icon').textContent = '⏹';
+    $('btn-text').textContent = 'STOP SCANNEN';
   } else {
-    btn.classList.remove('scanning');
-    $('btn-scan-text').textContent = 'START SCANNEN';
+    btn.classList.remove('active');
     $('btn-icon').textContent = '📷';
+    $('btn-text').textContent = 'START SCANNEN';
   }
 }
 
 $('btn-scan').addEventListener('click', () => {
-  state.scanning ? stopScanner() : startScanner();
+  S.scanning ? stopScanner() : startScanner();
 });
 
-// ── ON BARCODE ─────────────────────────────────────────
-async function onBarcode(result) {
-  if (state.cooldown) return;
+// ════════════════════════════════════════════
+//  BARCODE HANDLER
+// ════════════════════════════════════════════
+async function handleBarcode(result) {
+  if (S.cooldown) return;
   const code = result.codeResult.code;
   if (!code || code.length < 6) return;
 
-  state.cooldown = true;
-  setTimeout(() => { state.cooldown = false; }, 2500);
-  if (navigator.vibrate) navigator.vibrate(80);
+  S.cooldown = true;
+  setTimeout(() => { S.cooldown = false; }, 2800);
 
-  showToast('loading', 'Opzoeken...', code);
+  if (navigator.vibrate) navigator.vibrate(100);
+
+  toast('loading', 'Opzoeken...', code);
 
   const name = await lookupBarcode(code);
+
   if (!name) {
     hideToast();
-    state.pendingBarcode = code;
-    $('modal-barcode').textContent = code;
+    S.pendingCode = code;
+    $('modal-code').textContent = code;
     $('modal-input').value = '';
     $('modal').classList.add('open');
+    setTimeout(() => $('modal-input').focus(), 300);
     return;
   }
 
-  await submitProduct(name);
+  await addToList(name);
 }
 
-async function submitProduct(name) {
-  if (!state.selectedListId) {
-    showToast('error', 'Geen lijst', 'Kies een lijst bovenaan');
+// ════════════════════════════════════════════
+//  ADD TO TODOIST
+// ════════════════════════════════════════════
+async function addToList(name) {
+  if (!S.projectId) {
+    toast('err', 'Geen project', 'Kies een Todoist project');
     return;
   }
-  const ok = await listonicAddItem(state.token, state.selectedListId, name);
-  showToast(ok ? 'success' : 'error', name, ok ? '✓ Toegevoegd!' : 'Niet gelukt, probeer opnieuw');
-  addScan(name, ok);
+
+  const ok = await addTask(name, S.projectId);
+
+  if (ok) {
+    toast('ok', name, '✓ Toegevoegd aan Todoist!');
+    saveScan(name, true);
+  } else {
+    toast('err', 'Mislukt', 'Controleer je verbinding');
+    saveScan(name, false);
+  }
 }
 
-// ── MODAL ──────────────────────────────────────────────
-$('modal-confirm').addEventListener('click', async () => {
+// ════════════════════════════════════════════
+//  MODAL
+// ════════════════════════════════════════════
+$('modal-add').addEventListener('click', async () => {
   const name = $('modal-input').value.trim();
   if (!name) return;
   $('modal').classList.remove('open');
-  await submitProduct(name);
+  await addToList(name);
 });
-$('modal-cancel').addEventListener('click', () => $('modal').classList.remove('open'));
-$('modal-input').addEventListener('keydown', e => { if (e.key === 'Enter') $('modal-confirm').click(); });
-$('btn-clear').addEventListener('click', () => { state.scans = []; localStorage.removeItem('lsc_scans'); renderRecents(); });
 
-// ── INIT ───────────────────────────────────────────────
+$('modal-skip').addEventListener('click', () => {
+  $('modal').classList.remove('open');
+});
+
+$('modal-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') $('modal-add').click();
+});
+
+// ════════════════════════════════════════════
+//  CLEAR
+// ════════════════════════════════════════════
+$('btn-clear').addEventListener('click', () => {
+  S.scans = [];
+  localStorage.removeItem('bs_scans');
+  updateStats();
+  renderScans();
+});
+
+// ════════════════════════════════════════════
+//  INIT
+// ════════════════════════════════════════════
 (async () => {
-  if (state.token) {
-    try {
-      await loadLists();
-      renderRecents();
+  if (S.token) {
+    const projects = await getProjects();
+    if (projects && projects.length) {
+      S.projects = projects;
+      loadProjectSelect();
+      updateStats();
+      renderScans();
       showScreen('screen-main');
       return;
-    } catch(e) { localStorage.removeItem('lsc_token'); }
+    }
+    localStorage.removeItem('bs_token');
   }
-  showScreen('screen-login');
-  renderRecents();
+  showScreen('screen-setup');
+  renderScans();
 })();
 </script>
 </body>
