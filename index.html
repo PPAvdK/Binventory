@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Listonic Scan">
+<meta name="theme-color" content="#0a0c10">
+<title>Listonic Scanner</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  :root {
+    --bg: #0a0c10; --surface: #12151c; --surface2: #1a1e28; --border: #252a38;
+    --green: #00e87a; --green-dim: rgba(0,232,122,0.12); --red: #ff4757;
+    --yellow: #ffd32a; --text: #e8edf5; --muted: #5a6178;
+    --font-display: 'Bebas Neue', sans-serif; --font-body: 'DM Sans', sans-serif;
+  }
+  html, body { background: var(--bg); color: var(--text); font-family: var(--font-body); height: 100%; overflow: hidden; position: fixed; width: 100%; }
+  #app { height: 100%; display: flex; flex-direction: column; overflow: hidden; }
+  .screen { display: none; flex-direction: column; height: 100%; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+  .screen.active { display: flex; }
+
+  /* LOGIN */
+  #screen-login { background: var(--bg); align-items: center; justify-content: center; padding: 32px 24px; }
+  .login-logo { font-family: var(--font-display); font-size: 52px; letter-spacing: 3px; color: var(--green); line-height: 1; margin-bottom: 6px; }
+  .login-tagline { font-size: 13px; color: var(--muted); letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 48px; }
+  .login-card { background: var(--surface); border: 1px solid var(--border); border-radius: 24px; padding: 28px 24px; width: 100%; max-width: 360px; }
+  .login-card h2 { font-family: var(--font-display); font-size: 28px; letter-spacing: 1px; margin-bottom: 24px; }
+  .field { margin-bottom: 16px; }
+  .field label { display: block; font-size: 11px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+  .field input { width: 100%; background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; font-family: var(--font-body); font-size: 15px; color: var(--text); outline: none; transition: border-color 0.2s; }
+  .field input:focus { border-color: var(--green); }
+  .btn-primary { width: 100%; background: var(--green); color: #000; border: none; border-radius: 14px; padding: 16px; font-family: var(--font-display); font-size: 20px; letter-spacing: 1.5px; cursor: pointer; margin-top: 8px; transition: opacity 0.15s, transform 0.1s; -webkit-appearance: none; }
+  .btn-primary:active { opacity: 0.85; transform: scale(0.98); }
+  .login-error { display: none; background: rgba(255,71,87,0.1); border: 1px solid rgba(255,71,87,0.3); border-radius: 10px; padding: 12px 14px; font-size: 13px; color: var(--red); margin-top: 12px; text-align: center; line-height: 1.5; }
+
+  /* MAIN */
+  .topbar { display: flex; align-items: center; justify-content: space-between; padding: 54px 20px 16px; flex-shrink: 0; }
+  .topbar-brand { font-family: var(--font-display); font-size: 26px; letter-spacing: 2px; color: var(--green); }
+  .topbar-right { display: flex; align-items: center; gap: 12px; }
+  .list-selector { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 7px 12px; font-family: var(--font-body); font-size: 13px; color: var(--text); outline: none; max-width: 140px; -webkit-appearance: none; cursor: pointer; }
+  .btn-logout { background: none; border: 1px solid var(--border); border-radius: 10px; padding: 7px 10px; color: var(--muted); font-size: 16px; cursor: pointer; }
+
+  /* SCANNER */
+  .scanner-wrap { flex-shrink: 0; position: relative; margin: 0 16px; border-radius: 20px; overflow: hidden; background: #000; aspect-ratio: 4/3; }
+  #scanner-viewport { width: 100%; height: 100%; position: relative; overflow: hidden; }
+  #scanner-viewport video { width: 100% !important; height: 100% !important; object-fit: cover !important; }
+  #scanner-viewport canvas.drawingBuffer { display: none !important; }
+  .scan-overlay { position: absolute; inset: 0; pointer-events: none; display: flex; align-items: center; justify-content: center; }
+  .scan-frame { width: 65%; aspect-ratio: 2/1; position: relative; }
+  .scan-frame::before, .scan-frame::after, .scan-frame .corner-br, .scan-frame .corner-bl { content: ''; position: absolute; width: 22px; height: 22px; border-color: var(--green); border-style: solid; }
+  .scan-frame::before { top: 0; left: 0; border-width: 3px 0 0 3px; border-radius: 4px 0 0 0; }
+  .scan-frame::after  { top: 0; right: 0; border-width: 3px 3px 0 0; border-radius: 0 4px 0 0; }
+  .scan-frame .corner-br { bottom: 0; right: 0; border-width: 0 3px 3px 0; border-radius: 0 0 4px 0; }
+  .scan-frame .corner-bl { bottom: 0; left: 0; border-width: 0 0 3px 3px; border-radius: 0 0 0 4px; }
+  .scan-line { position: absolute; left: 4px; right: 4px; height: 2px; background: linear-gradient(90deg, transparent, var(--green), transparent); animation: scanline 2s ease-in-out infinite; box-shadow: 0 0 8px var(--green); }
+  @keyframes scanline { 0% { top: 8px; } 50% { top: calc(100% - 8px); } 100% { top: 8px; } }
+  .scanner-status { position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.65); backdrop-filter: blur(6px); border-radius: 100px; padding: 6px 14px; font-size: 12px; color: var(--green); font-weight: 500; white-space: nowrap; }
+  .scanner-placeholder { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; background: var(--surface); }
+  .placeholder-icon { font-size: 40px; opacity: 0.4; }
+  .placeholder-text { font-size: 13px; color: var(--muted); }
+
+  /* SCAN BUTTON */
+  .scan-btn-wrap { padding: 16px; flex-shrink: 0; }
+  .btn-scan { width: 100%; background: var(--green); color: #000; border: none; border-radius: 16px; padding: 18px; font-family: var(--font-display); font-size: 22px; letter-spacing: 2px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; transition: opacity 0.15s, transform 0.1s; -webkit-appearance: none; }
+  .btn-scan.scanning { background: var(--red); color: #fff; }
+  .btn-scan:active { opacity: 0.85; transform: scale(0.99); }
+
+  /* TOAST */
+  .toast { position: fixed; bottom: 0; left: 0; right: 0; background: var(--surface); border-top: 1px solid var(--border); padding: 16px 20px 32px; transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); z-index: 100; border-radius: 24px 24px 0 0; }
+  .toast.show { transform: translateY(0); }
+  .toast-inner { display: flex; align-items: center; gap: 14px; }
+  .toast-icon { width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; }
+  .toast-icon.success { background: var(--green-dim); }
+  .toast-icon.error   { background: rgba(255,71,87,0.12); }
+  .toast-icon.loading { background: rgba(255,211,42,0.12); }
+  .toast-content { flex: 1; min-width: 0; }
+  .toast-title { font-weight: 600; font-size: 15px; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .toast-sub { font-size: 12px; color: var(--muted); }
+
+  /* RECENTS */
+  .recents-header { display: flex; align-items: center; justify-content: space-between; padding: 8px 20px 10px; flex-shrink: 0; }
+  .recents-title { font-size: 11px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); }
+  .recents-clear { font-size: 12px; color: var(--muted); background: none; border: none; cursor: pointer; padding: 4px 8px; }
+  .recents-list { flex: 1; overflow-y: auto; padding: 0 16px 24px; -webkit-overflow-scrolling: touch; }
+  .scan-item { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 13px 16px; margin-bottom: 10px; display: flex; align-items: center; gap: 12px; animation: slideIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) both; }
+  @keyframes slideIn { from { opacity: 0; transform: translateY(10px) scale(0.97); } to { opacity: 1; transform: none; } }
+  .scan-item-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .scan-item-dot.ok  { background: var(--green); box-shadow: 0 0 6px var(--green); }
+  .scan-item-dot.err { background: var(--red); }
+  .scan-item-name { flex: 1; font-size: 14px; font-weight: 500; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .scan-item-time { font-size: 11px; color: var(--muted); flex-shrink: 0; }
+  .empty-state { text-align: center; padding: 32px 20px; color: var(--muted); }
+  .empty-icon { font-size: 36px; margin-bottom: 10px; opacity: 0.4; }
+  .empty-text { font-size: 13px; }
+
+  /* MODAL */
+  .modal-backdrop { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); z-index: 200; align-items: flex-end; }
+  .modal-backdrop.open { display: flex; }
+  .modal { background: var(--surface); border: 1px solid var(--border); border-radius: 24px 24px 0 0; padding: 24px 20px 40px; width: 100%; animation: modalUp 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) both; }
+  @keyframes modalUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+  .modal h3 { font-family: var(--font-display); font-size: 24px; margin-bottom: 6px; }
+  .modal p { font-size: 13px; color: var(--muted); margin-bottom: 20px; line-height: 1.6; }
+  .modal-barcode { font-family: monospace; font-size: 13px; color: var(--yellow); background: rgba(255,211,42,0.08); border-radius: 6px; padding: 2px 8px; }
+  .modal-actions { display: flex; gap: 10px; margin-top: 16px; }
+  .btn-secondary { flex: 1; background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; padding: 14px; font-family: var(--font-body); font-size: 14px; color: var(--text); cursor: pointer; -webkit-appearance: none; }
+  .btn-confirm { flex: 1; background: var(--green); border: none; border-radius: 12px; padding: 14px; font-family: var(--font-display); font-size: 18px; letter-spacing: 1px; color: #000; cursor: pointer; -webkit-appearance: none; }
+  .spinner { width: 18px; height: 18px; border: 2px solid rgba(255,211,42,0.3); border-top-color: var(--yellow); border-radius: 50%; animation: spin 0.7s linear infinite; display: inline-block; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body>
+<div id="app">
+
+  <div id="screen-login" class="screen active">
+    <div class="login-logo">SCAN</div>
+    <div class="login-tagline">voor Listonic</div>
+    <div class="login-card">
+      <h2>Inloggen</h2>
+      <div class="field">
+        <label>E-mailadres</label>
+        <input type="email" id="input-email" placeholder="jouw@email.com" autocomplete="email">
+      </div>
+      <div class="field">
+        <label>Wachtwoord</label>
+        <input type="password" id="input-password" placeholder="••••••••" autocomplete="current-password">
+      </div>
+      <button class="btn-primary" id="btn-login">INLOGGEN</button>
+      <div class="login-error" id="login-error"></div>
+    </div>
+  </div>
+
+  <div id="screen-main" class="screen">
+    <div class="topbar">
+      <div class="topbar-brand">SCAN</div>
+      <div class="topbar-right">
+        <select class="list-selector" id="list-selector"><option>Laden...</option></select>
+        <button class="btn-logout" id="btn-logout">↩</button>
+      </div>
+    </div>
+
+    <div class="scanner-wrap">
+      <div id="scanner-viewport">
+        <div class="scanner-placeholder" id="scanner-placeholder">
+          <div class="placeholder-icon">📷</div>
+          <div class="placeholder-text">Druk op START SCANNEN</div>
+        </div>
+      </div>
+      <div class="scan-overlay">
+        <div class="scan-frame">
+          <div class="corner-br"></div>
+          <div class="corner-bl"></div>
+          <div class="scan-line" id="scan-line" style="display:none"></div>
+        </div>
+      </div>
+      <div class="scanner-status" id="scanner-status" style="display:none">🟢 Klaar om te scannen</div>
+    </div>
+
+    <div class="scan-btn-wrap">
+      <button class="btn-scan" id="btn-scan">
+        <span id="btn-icon">📷</span>
+        <span id="btn-scan-text">START SCANNEN</span>
+      </button>
+    </div>
+
+    <div class="recents-header">
+      <div class="recents-title">Gescand vandaag</div>
+      <button class="recents-clear" id="btn-clear">Wis alles</button>
+    </div>
+    <div class="recents-list" id="recents-list"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast">
+  <div class="toast-inner">
+    <div class="toast-icon" id="toast-icon"></div>
+    <div class="toast-content">
+      <div class="toast-title" id="toast-title"></div>
+      <div class="toast-sub" id="toast-sub"></div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="modal">
+  <div class="modal">
+    <h3>Niet gevonden</h3>
+    <p>Barcode <span class="modal-barcode" id="modal-barcode"></span> staat niet in de database. Voer de naam in:</p>
+    <div class="field">
+      <input type="text" id="modal-input" placeholder="bijv. Halfvolle melk">
+    </div>
+    <div class="modal-actions">
+      <button class="btn-secondary" id="modal-cancel">Overslaan</button>
+      <button class="btn-confirm" id="modal-confirm">TOEVOEGEN</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── PROXY URL ──────────────────────────────────────────
+// Dit werkt automatisch op jouw Netlify site
+const PROXY = '/api/listonic';
+
+// ── STATE ──────────────────────────────────────────────
+const state = {
+  token: localStorage.getItem('lsc_token'),
+  lists: [],
+  selectedListId: localStorage.getItem('lsc_list'),
+  scanning: false,
+  scans: JSON.parse(localStorage.getItem('lsc_scans') || '[]'),
+  pendingBarcode: null,
+  cooldown: false
+};
+
+// ── HELPERS ────────────────────────────────────────────
+const $ = id => document.getElementById(id);
+
+function showToast(type, title, sub) {
+  const icons = { success: '✅', error: '❌', loading: '<div class="spinner"></div>' };
+  const cls   = { success: 'success', error: 'error', loading: 'loading' };
+  $('toast-icon').className = `toast-icon ${cls[type]}`;
+  $('toast-icon').innerHTML = icons[type];
+  $('toast-title').textContent = title;
+  $('toast-sub').textContent = sub || '';
+  $('toast').classList.add('show');
+  if (type !== 'loading') setTimeout(() => $('toast').classList.remove('show'), 3000);
+}
+function hideToast() { $('toast').classList.remove('show'); }
+
+function timeNow() {
+  const d = new Date();
+  return `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+}
+
+function addScan(name, ok) {
+  state.scans.unshift({ name, ok, time: timeNow() });
+  if (state.scans.length > 30) state.scans.pop();
+  localStorage.setItem('lsc_scans', JSON.stringify(state.scans));
+  renderRecents();
+}
+
+function renderRecents() {
+  const el = $('recents-list');
+  if (!state.scans.length) {
+    el.innerHTML = `<div class="empty-state"><div class="empty-icon">🛒</div><div class="empty-text">Nog niets gescand</div></div>`;
+    return;
+  }
+  el.innerHTML = state.scans.map(s => `
+    <div class="scan-item">
+      <div class="scan-item-dot ${s.ok ? 'ok' : 'err'}"></div>
+      <div class="scan-item-name">${s.name}</div>
+      <div class="scan-item-time">${s.time}</div>
+    </div>`).join('');
+}
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  $(id).classList.add('active');
+}
+
+// ── PROXY API CALLS ────────────────────────────────────
+async function proxyCall(path, method = 'GET', body = null, token = null) {
+  const headers = { 'Content-Type': 'application/json' };
+  if (token) headers['Authorization'] = `Bearer ${token}`;
+
+  const opts = { method, headers };
+  if (body) opts.body = JSON.stringify(body);
+
+  const url = `${PROXY}?path=${encodeURIComponent(path)}`;
+  const r = await fetch(url, opts);
+  return r.ok ? await r.json() : null;
+}
+
+async function listonicLogin(email, password) {
+  const data = await proxyCall('/v3/user/login', 'POST', { email, password });
+  return data?.token || data?.access_token || null;
+}
+
+async function listonicGetLists(token) {
+  const data = await proxyCall('/v3/lists', 'GET', null, token);
+  return Array.isArray(data) ? data : (data?.lists || []);
+}
+
+async function listonicAddItem(token, listId, name) {
+  const data = await proxyCall(`/v3/lists/${listId}/items`, 'POST', { name }, token);
+  return data !== null;
+}
+
+// ── OPEN FOOD FACTS ────────────────────────────────────
+async function lookupBarcode(barcode) {
+  try {
+    const r = await fetch(`https://world.openfoodfacts.org/api/v0/product/${barcode}.json`);
+    const d = await r.json();
+    if (d.status !== 1) return null;
+    const p = d.product;
+    const name = (p.product_name_nl || p.product_name || '').trim();
+    const brand = (p.brands || '').split(',')[0].trim();
+    if (!name) return null;
+    return brand ? `${name} (${brand})` : name;
+  } catch { return null; }
+}
+
+// ── LOGIN ──────────────────────────────────────────────
+$('btn-login').addEventListener('click', async () => {
+  const email = $('input-email').value.trim();
+  const pw    = $('input-password').value;
+  $('login-error').style.display = 'none';
+
+  if (!email || !pw) {
+    $('login-error').textContent = 'Vul je e-mail en wachtwoord in.';
+    $('login-error').style.display = 'block';
+    return;
+  }
+
+  $('btn-login').textContent = 'BEZIG...';
+  $('btn-login').disabled = true;
+
+  try {
+    const token = await listonicLogin(email, pw);
+    if (!token) throw new Error('Geen token ontvangen');
+
+    state.token = token;
+    localStorage.setItem('lsc_token', token);
+    await loadLists();
+    renderRecents();
+    showScreen('screen-main');
+  } catch(e) {
+    $('login-error').textContent = 'Inloggen mislukt. Controleer je gegevens en internetverbinding.';
+    $('login-error').style.display = 'block';
+  }
+
+  $('btn-login').textContent = 'INLOGGEN';
+  $('btn-login').disabled = false;
+});
+
+$('input-password').addEventListener('keydown', e => { if (e.key === 'Enter') $('btn-login').click(); });
+
+$('btn-logout').addEventListener('click', () => {
+  stopScanner();
+  localStorage.removeItem('lsc_token');
+  state.token = null;
+  showScreen('screen-login');
+});
+
+// ── LISTS ──────────────────────────────────────────────
+async function loadLists() {
+  const lists = await listonicGetLists(state.token);
+  state.lists = lists;
+  const sel = $('list-selector');
+
+  if (!lists.length) {
+    sel.innerHTML = '<option>Geen lijsten gevonden</option>';
+    return;
+  }
+
+  sel.innerHTML = lists.map(l => {
+    const id   = l.id || l.listId || l._id;
+    const name = l.name || l.title || 'Lijst';
+    return `<option value="${id}" ${id === state.selectedListId ? 'selected' : ''}>${name}</option>`;
+  }).join('');
+
+  if (!state.selectedListId) {
+    state.selectedListId = lists[0].id || lists[0].listId;
+    localStorage.setItem('lsc_list', state.selectedListId);
+  }
+}
+
+$('list-selector').addEventListener('change', e => {
+  state.selectedListId = e.target.value;
+  localStorage.setItem('lsc_list', state.selectedListId);
+});
+
+// ── SCANNER ────────────────────────────────────────────
+function startScanner() {
+  $('scanner-placeholder').style.display = 'none';
+  $('scan-line').style.display = 'block';
+  $('scanner-status').style.display = 'block';
+
+  Quagga.init({
+    inputStream: {
+      type: 'LiveStream',
+      target: $('scanner-viewport'),
+      constraints: { facingMode: 'environment', width: { ideal: 1280 }, height: { ideal: 720 } }
+    },
+    decoder: { readers: ['ean_reader', 'ean_8_reader', 'upc_reader', 'code_128_reader'] },
+    locate: true, frequency: 10
+  }, err => {
+    if (err) {
+      showToast('error', 'Camera niet beschikbaar', 'Geef cameratoestemming in je browser');
+      stopScanner();
+      return;
+    }
+    Quagga.start();
+    state.scanning = true;
+    updateBtn();
+  });
+
+  Quagga.onDetected(onBarcode);
+}
+
+function stopScanner() {
+  try { Quagga.offDetected(onBarcode); Quagga.stop(); } catch(e) {}
+  state.scanning = false;
+  $('scan-line').style.display = 'none';
+  $('scanner-status').style.display = 'none';
+  $('scanner-placeholder').style.display = 'flex';
+  updateBtn();
+}
+
+function updateBtn() {
+  const btn = $('btn-scan');
+  if (state.scanning) {
+    btn.classList.add('scanning');
+    $('btn-scan-text').textContent = 'STOP SCANNEN';
+    $('btn-icon').textContent = '⏹';
+  } else {
+    btn.classList.remove('scanning');
+    $('btn-scan-text').textContent = 'START SCANNEN';
+    $('btn-icon').textContent = '📷';
+  }
+}
+
+$('btn-scan').addEventListener('click', () => {
+  state.scanning ? stopScanner() : startScanner();
+});
+
+// ── ON BARCODE ─────────────────────────────────────────
+async function onBarcode(result) {
+  if (state.cooldown) return;
+  const code = result.codeResult.code;
+  if (!code || code.length < 6) return;
+
+  state.cooldown = true;
+  setTimeout(() => { state.cooldown = false; }, 2500);
+  if (navigator.vibrate) navigator.vibrate(80);
+
+  showToast('loading', 'Opzoeken...', code);
+
+  const name = await lookupBarcode(code);
+  if (!name) {
+    hideToast();
+    state.pendingBarcode = code;
+    $('modal-barcode').textContent = code;
+    $('modal-input').value = '';
+    $('modal').classList.add('open');
+    return;
+  }
+
+  await submitProduct(name);
+}
+
+async function submitProduct(name) {
+  if (!state.selectedListId) {
+    showToast('error', 'Geen lijst', 'Kies een lijst bovenaan');
+    return;
+  }
+  const ok = await listonicAddItem(state.token, state.selectedListId, name);
+  showToast(ok ? 'success' : 'error', name, ok ? '✓ Toegevoegd!' : 'Niet gelukt, probeer opnieuw');
+  addScan(name, ok);
+}
+
+// ── MODAL ──────────────────────────────────────────────
+$('modal-confirm').addEventListener('click', async () => {
+  const name = $('modal-input').value.trim();
+  if (!name) return;
+  $('modal').classList.remove('open');
+  await submitProduct(name);
+});
+$('modal-cancel').addEventListener('click', () => $('modal').classList.remove('open'));
+$('modal-input').addEventListener('keydown', e => { if (e.key === 'Enter') $('modal-confirm').click(); });
+$('btn-clear').addEventListener('click', () => { state.scans = []; localStorage.removeItem('lsc_scans'); renderRecents(); });
+
+// ── INIT ───────────────────────────────────────────────
+(async () => {
+  if (state.token) {
+    try {
+      await loadLists();
+      renderRecents();
+      showScreen('screen-main');
+      return;
+    } catch(e) { localStorage.removeItem('lsc_token'); }
+  }
+  showScreen('screen-login');
+  renderRecents();
+})();
+</script>
+</body>
+</html>
