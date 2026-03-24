@@ -201,8 +201,8 @@
 
 <script>
 // ── PROXY URL ──────────────────────────────────────────
-// Dit werkt automatisch op jouw Netlify site
-const PROXY = '/api/listonic';
+// Publieke CORS proxy — werkt overal zonder server setup
+const LISTONIC_BASE = 'https://corsproxy.io/?url=https://api.listonic.com';
 
 // ── STATE ──────────────────────────────────────────────
 const state = {
@@ -261,31 +261,30 @@ function showScreen(id) {
   $(id).classList.add('active');
 }
 
-// ── PROXY API CALLS ────────────────────────────────────
-async function proxyCall(path, method = 'GET', body = null, token = null) {
+// ── LISTONIC API via CORS proxy ─────────────────────────
+async function listonicFetch(path, method = 'GET', body = null, token = null) {
   const headers = { 'Content-Type': 'application/json' };
   if (token) headers['Authorization'] = `Bearer ${token}`;
-
   const opts = { method, headers };
   if (body) opts.body = JSON.stringify(body);
-
-  const url = `${PROXY}?path=${encodeURIComponent(path)}`;
-  const r = await fetch(url, opts);
-  return r.ok ? await r.json() : null;
+  try {
+    const r = await fetch(`${LISTONIC_BASE}${path}`, opts);
+    return r.ok ? await r.json() : null;
+  } catch(e) { return null; }
 }
 
 async function listonicLogin(email, password) {
-  const data = await proxyCall('/v3/user/login', 'POST', { email, password });
+  const data = await listonicFetch('/v3/user/login', 'POST', { email, password });
   return data?.token || data?.access_token || null;
 }
 
 async function listonicGetLists(token) {
-  const data = await proxyCall('/v3/lists', 'GET', null, token);
+  const data = await listonicFetch('/v3/lists', 'GET', null, token);
   return Array.isArray(data) ? data : (data?.lists || []);
 }
 
 async function listonicAddItem(token, listId, name) {
-  const data = await proxyCall(`/v3/lists/${listId}/items`, 'POST', { name }, token);
+  const data = await listonicFetch(`/v3/lists/${listId}/items`, 'POST', { name }, token);
   return data !== null;
 }
 
