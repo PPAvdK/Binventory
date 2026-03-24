@@ -41,8 +41,3 @@ exports.handler = async (event) => {
     req.end();
   });
 };
-```
-
-Commit → dan test je met:
-```
-https://imaginative-empanada-61637f.netlify.app/.netlify/functions/listonic?path=/projects&token=b637cf1d66210628931915e1c694bdbd636d98
