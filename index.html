@@ -6,9 +6,9 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="BinScan">
+<meta name="apple-mobile-web-app-title" content="Binventory">
 <meta name="theme-color" content="#080a0f">
-<title>BinScan — Boodschappen Scanner</title>
+<title>Binventory — Boodschappen Scanner</title>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Clash+Display:wght@600;700&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script>
@@ -670,7 +670,7 @@ body::after {
 
   <!-- ══════════ SETUP SCREEN ══════════ -->
   <div id="screen-setup" class="screen active">
-    <div class="setup-logo">Bin<span class="accent">Scan</span></div>
+    <div class="setup-logo">Bin<span class="accent">ventory</span></div>
     <div class="setup-sub">Boodschappen scanner</div>
 
     <div class="setup-card">
@@ -698,7 +698,7 @@ body::after {
 
     <div class="topbar">
       <div class="topbar-left">
-        <div class="topbar-brand">Bin<span>Scan</span></div>
+        <div class="topbar-brand">Bin<span>ventory</span></div>
         <div class="topbar-project" id="topbar-project">laden...</div>
       </div>
       <div class="topbar-right">
@@ -914,7 +914,7 @@ async function addTask(content, projectId) {
 // ════════════════════════════════════════════
 
 // Lokale cache: barcode → naam (blijft bewaard op telefoon)
-const CACHE_KEY = 'bs_barcode_cache';
+const CACHE_KEY = 'bv_barcode_cache';
 function getCache() {
   try { return JSON.parse(localStorage.getItem(CACHE_KEY) || '{}'); } 
   catch { return {}; }
