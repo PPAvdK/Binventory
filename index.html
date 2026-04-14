@@ -166,4 +166,1210 @@ body::after {
 
 .field input, .field select {
   width: 100%;
-  background: var(--surface
+  background: var(--surface2);
+  border: 2px solid transparent;
+  border-radius: 16px;
+  padding: 16px;
+  font-family: var(--font-main);
+  font-size: 15px;
+  color: var(--text);
+  outline: none;
+  transition: all 0.2s;
+  -webkit-appearance: none;
+}
+
+.field input:focus, .field select:focus {
+  border-color: var(--accent);
+  background: #192235;
+}
+
+.field input::placeholder { color: var(--muted); }
+
+.btn-main {
+  width: 100%;
+  background: var(--accent-gradient);
+  color: #fff;
+  border: none;
+  border-radius: 16px;
+  padding: 16px;
+  font-family: var(--font-main);
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  margin-top: 8px;
+  transition: opacity 0.15s, transform 0.1s, box-shadow 0.2s;
+  -webkit-appearance: none;
+  box-shadow: 0 8px 24px rgba(16, 185, 129, 0.25);
+}
+
+.btn-main:active { opacity: 0.9; transform: scale(0.98); }
+.btn-main:disabled { opacity: 0.5; box-shadow: none; }
+
+.setup-error {
+  display: none;
+  background: rgba(244, 63, 94, 0.1);
+  border: 1px solid rgba(244, 63, 94, 0.2);
+  border-radius: 12px;
+  padding: 14px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--red);
+  margin-top: 20px;
+  text-align: center;
+  line-height: 1.5;
+}
+
+.step-hint {
+  background: var(--surface2);
+  border-radius: 16px;
+  padding: 16px;
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.6;
+  margin-bottom: 24px;
+}
+
+.step-hint strong { 
+  display: flex; 
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 8px; 
+  font-size: 12px; 
+  color: var(--text);
+  text-transform: uppercase; 
+  letter-spacing: 0.5px;
+}
+
+/* ══════════════════════════════════════
+   MAIN SCREEN
+══════════════════════════════════════ */
+#screen-main { background: var(--bg); }
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 56px 20px 20px;
+  flex-shrink: 0;
+}
+
+.topbar-left { 
+  display: flex; 
+  align-items: center; 
+  gap: 12px; 
+}
+
+.topbar-logo-small {
+  width: 36px;
+  height: 36px;
+  background: var(--accent-gradient);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.topbar-logo-small svg { width: 18px; height: 18px; color: #fff; }
+
+.topbar-brand-text { display: flex; flex-direction: column; }
+
+.topbar-brand {
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  line-height: 1.1;
+}
+
+.topbar-brand span { color: var(--accent-light); }
+
+.topbar-project {
+  font-size: 12px;
+  color: var(--muted);
+  font-weight: 500;
+}
+
+.topbar-right { display: flex; align-items: center; gap: 10px; }
+
+.btn-settings {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 10px;
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-settings svg { width: 18px; height: 18px; fill: currentColor; }
+.btn-settings:active { border-color: var(--accent); color: var(--accent); background: var(--surface2); }
+
+/* Scanner */
+.scanner-wrap {
+  flex-shrink: 0;
+  position: relative;
+  margin: 0 16px;
+  border-radius: 28px;
+  overflow: hidden;
+  background: #000;
+  aspect-ratio: 4/3;
+  box-shadow: 0 16px 40px rgba(0,0,0,0.5);
+  border: 1px solid rgba(255,255,255,0.05);
+}
+
+#scanner-viewport {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+#scanner-viewport video {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+}
+
+#scanner-viewport canvas.drawingBuffer { display: none !important; }
+
+.scan-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+/* Corner brackets - softer and more modern */
+.bracket {
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  border-color: var(--accent);
+  border-style: solid;
+  opacity: 0.8;
+  border-radius: 12px;
+}
+.bracket.tl { top: 24px; left: 24px; border-width: 4px 0 0 4px; border-bottom-right-radius: 0; border-top-right-radius: 0; border-bottom-left-radius: 0; }
+.bracket.tr { top: 24px; right: 24px; border-width: 4px 4px 0 0; border-bottom-left-radius: 0; border-top-left-radius: 0; border-bottom-right-radius: 0; }
+.bracket.bl { bottom: 24px; left: 24px; border-width: 0 0 4px 4px; border-top-right-radius: 0; border-bottom-right-radius: 0; border-top-left-radius: 0; }
+.bracket.br { bottom: 24px; right: 24px; border-width: 0 4px 4px 0; border-top-left-radius: 0; border-bottom-left-radius: 0; border-top-right-radius: 0; }
+
+/* Scan line - Red laser style */
+.scan-line {
+  position: absolute;
+  left: 20px; right: 20px;
+  height: 2px;
+  background: var(--red);
+  box-shadow: 0 0 16px 2px rgba(244, 63, 94, 0.6);
+  animation: sweep 2.5s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+  display: none;
+}
+
+@keyframes sweep {
+  0%   { top: 20px; opacity: 0; }
+  10%  { opacity: 1; }
+  90%  { opacity: 1; }
+  100% { top: calc(100% - 20px); opacity: 0; }
+}
+
+.scanner-placeholder {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  background: var(--surface);
+}
+
+.placeholder-rings {
+  position: relative;
+  width: 72px; height: 72px;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--surface2);
+  border-radius: 50%;
+}
+
+.placeholder-icon { font-size: 28px; position: relative; z-index: 1; }
+.placeholder-text { font-size: 14px; color: var(--muted); font-weight: 500; }
+
+/* Status pill */
+.scanner-pill {
+  position: absolute;
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(19, 27, 47, 0.85);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 100px;
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--accent-light);
+  white-space: nowrap;
+  display: none;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+/* Scan button */
+.scan-btn-area {
+  padding: 20px 16px 16px;
+  flex-shrink: 0;
+}
+
+.btn-scan {
+  width: 100%;
+  background: var(--accent-gradient);
+  color: #fff;
+  border: none;
+  border-radius: 20px;
+  padding: 18px;
+  font-family: var(--font-main);
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  transition: all 0.2s;
+  -webkit-appearance: none;
+  box-shadow: 0 8px 24px rgba(16, 185, 129, 0.25);
+}
+
+.btn-scan.active {
+  background: var(--red);
+  box-shadow: 0 8px 24px rgba(244, 63, 94, 0.25);
+}
+
+.btn-scan:active { transform: scale(0.98); }
+
+/* Stats row */
+.stats-row {
+  display: flex;
+  gap: 12px;
+  padding: 0 16px 16px;
+  flex-shrink: 0;
+}
+
+.stat-chip {
+  flex: 1;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.stat-num {
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--text);
+}
+
+.stat-label {
+  font-size: 11px;
+  color: var(--muted);
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+/* Recents */
+.recents-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 20px 12px;
+  flex-shrink: 0;
+}
+
+.recents-title {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--text);
+}
+
+.recents-clear {
+  font-size: 12px;
+  color: var(--muted);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  cursor: pointer;
+  padding: 6px 12px;
+  font-family: var(--font-main);
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.recents-clear:active { background: var(--surface2); }
+
+.recents-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0 16px 32px;
+  -webkit-overflow-scrolling: touch;
+}
+
+.scan-item {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 16px;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  animation: popIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+@keyframes popIn {
+  from { opacity: 0; transform: translateY(12px) scale(0.98); }
+  to   { opacity: 1; transform: none; }
+}
+
+.scan-icon {
+  width: 36px; height: 36px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 16px;
+}
+
+.scan-item.ok .scan-icon { background: var(--accent-dim); color: var(--accent-light); }
+.scan-item.err .scan-icon { background: rgba(244, 63, 94, 0.1); color: var(--red); }
+
+.scan-details { flex: 1; min-width: 0; }
+
+.scan-name {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin-bottom: 2px;
+}
+
+.scan-time {
+  font-size: 12px;
+  color: var(--muted);
+  font-weight: 500;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--muted);
+}
+
+.empty-icon { 
+  width: 64px; height: 64px; 
+  background: var(--surface); 
+  border-radius: 50%; 
+  display: flex; align-items: center; justify-content: center;
+  font-size: 28px; 
+  margin: 0 auto 16px; 
+  opacity: 0.5; 
+}
+.empty-text { font-size: 14px; font-weight: 500; }
+
+/* ══════════════════════════════════════
+   TOAST
+══════════════════════════════════════ */
+.toast {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  background: rgba(19, 27, 47, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-top: 1px solid rgba(255,255,255,0.05);
+  padding: 20px 24px 36px;
+  transform: translateY(100%);
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  z-index: 500;
+  border-radius: 32px 32px 0 0;
+  box-shadow: 0 -10px 40px rgba(0,0,0,0.3);
+}
+
+.toast.show { transform: translateY(0); }
+
+.toast-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.toast-icon {
+  width: 48px; height: 48px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  flex-shrink: 0;
+}
+
+.toast-icon.ok  { background: var(--accent-gradient); color: #fff; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3); }
+.toast-icon.err { background: var(--red); color: #fff; }
+.toast-icon.loading { background: var(--surface2); }
+
+.toast-body { flex: 1; min-width: 0; }
+.toast-title { font-weight: 700; font-size: 16px; margin-bottom: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #fff;}
+.toast-sub   { font-size: 13px; color: var(--muted); font-weight: 500; }
+
+.spinner {
+  width: 22px; height: 22px;
+  border: 3px solid rgba(255,255,255,0.1);
+  border-top-color: var(--accent-light);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ══════════════════════════════════════
+   MODAL (manual input)
+══════════════════════════════════════ */
+.modal-bg {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 600;
+  align-items: flex-end;
+}
+
+.modal-bg.open { display: flex; }
+
+.modal {
+  background: var(--bg);
+  border-top: 1px solid var(--border);
+  border-radius: 32px 32px 0 0;
+  padding: 32px 24px 48px;
+  width: 100%;
+  animation: slideUp 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  box-shadow: 0 -10px 40px rgba(0,0,0,0.4);
+}
+
+@keyframes slideUp {
+  from { transform: translateY(100%); }
+  to   { transform: translateY(0); }
+}
+
+.modal-tag {
+  display: inline-block;
+  background: rgba(244, 63, 94, 0.15);
+  color: var(--red);
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  padding: 6px 12px;
+  margin-bottom: 16px;
+}
+
+.modal h3 {
+  font-size: 22px;
+  font-weight: 800;
+  margin-bottom: 8px;
+  color: var(--text);
+}
+
+.modal-desc {
+  font-size: 14px;
+  color: var(--muted);
+  line-height: 1.6;
+  margin-bottom: 24px;
+}
+
+.modal-code {
+  font-family: monospace;
+  font-size: 13px;
+  background: var(--surface2);
+  color: var(--text);
+  border-radius: 6px;
+  padding: 3px 8px;
+  font-weight: 600;
+}
+
+.modal-btns {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.btn-ghost {
+  flex: 1;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 16px;
+  font-family: var(--font-main);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+  cursor: pointer;
+  -webkit-appearance: none;
+  transition: all 0.2s;
+}
+
+.btn-ghost:active { background: var(--surface2); }
+
+.btn-add {
+  flex: 2;
+  background: var(--accent-gradient);
+  border: none;
+  border-radius: 16px;
+  padding: 16px;
+  font-family: var(--font-main);
+  font-size: 16px;
+  font-weight: 700;
+  color: #fff;
+  cursor: pointer;
+  -webkit-appearance: none;
+  box-shadow: 0 8px 20px rgba(16, 185, 129, 0.25);
+}
+
+.btn-add:active { transform: scale(0.98); }
+</style>
+</head>
+<body>
+<div id="app">
+
+  <div id="screen-setup" class="screen active">
+    
+    <div class="setup-header">
+      <div class="brand-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 7V4h16v3M9 20h6a2 2 0 002-2V9H7v9a2 2 0 002 2z"></path>
+          <line x1="10" y1="11" x2="10" y2="17"></line>
+          <line x1="14" y1="11" x2="14" y2="17"></line>
+        </svg>
+      </div>
+      <div class="setup-logo">Bin<span class="accent">ventory</span></div>
+      <div class="setup-sub">Boodschappen Scanner</div>
+    </div>
+
+    <div class="setup-card">
+      <h2>Koppel Todoist</h2>
+
+      <div class="step-hint">
+        <strong>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent-light)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+          API Token
+        </strong>
+        Ga naar <a href="https://app.todoist.com/app/settings/integrations/developer" target="_blank">Todoist Instellingen</a>, scroll naar beneden en kopieer je API token.
+      </div>
+
+      <div class="field">
+        <label>Jouw Todoist Token</label>
+        <input type="text" id="input-token" placeholder="Plak token..." autocomplete="off" spellcheck="false">
+      </div>
+
+      <button class="btn-main" id="btn-connect">Verbinden</button>
+
+      <div class="setup-error" id="setup-error"></div>
+    </div>
+  </div>
+
+  <div id="screen-main" class="screen">
+
+    <div class="topbar">
+      <div class="topbar-left">
+        <div class="topbar-logo-small">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 7V4h16v3M9 20h6a2 2 0 002-2V9H7v9a2 2 0 002 2z"></path>
+          </svg>
+        </div>
+        <div class="topbar-brand-text">
+          <div class="topbar-brand">Bin<span>ventory</span></div>
+          <div class="topbar-project" id="topbar-project">laden...</div>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <select class="field" id="project-select" style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:8px 12px;font-size:13px;font-weight:600;color:var(--text);max-width:130px;margin:0;">
+          <option>Laden...</option>
+        </select>
+        <button class="btn-settings" id="btn-logout" title="Uitloggen">
+          <svg viewBox="0 0 24 24"><path d="M16 17l5-5-5-5M21 12H9M9 3H4a2 2 0 00-2 2v14a2 2 0 002 2h5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="scanner-wrap">
+      <div id="scanner-viewport">
+        <div class="scanner-placeholder" id="placeholder">
+          <div class="placeholder-rings">
+            <div class="placeholder-icon">📸</div>
+          </div>
+          <div class="placeholder-text">Druk START om te scannen</div>
+        </div>
+      </div>
+      <div class="scan-overlay">
+        <div class="bracket tl"></div>
+        <div class="bracket tr"></div>
+        <div class="bracket bl"></div>
+        <div class="bracket br"></div>
+        <div class="scan-line" id="scan-line"></div>
+      </div>
+      <div class="scanner-pill" id="scanner-pill">
+        <span style="display:inline-block;width:8px;height:8px;background:var(--accent-light);border-radius:50%;margin-right:6px;box-shadow:0 0 8px var(--accent-light);"></span>
+        Camera actief
+      </div>
+    </div>
+
+    <div class="scan-btn-area">
+      <button class="btn-scan" id="btn-scan">
+        <span id="btn-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7V4h16v3M9 20h6a2 2 0 002-2V9H7v9a2 2 0 002 2z"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+        </span>
+        <span id="btn-text">Start Scannen</span>
+      </button>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat-chip">
+        <div class="stat-num" id="stat-today">0</div>
+        <div class="stat-label">Vandaag</div>
+      </div>
+      <div class="stat-chip">
+        <div class="stat-num" id="stat-total">0</div>
+        <div class="stat-label">Totaal</div>
+      </div>
+      <div class="stat-chip">
+        <div class="stat-num" id="stat-project" style="color: var(--accent-light);">0</div>
+        <div class="stat-label">Onthouden</div>
+      </div>
+    </div>
+
+    <div class="recents-header">
+      <div class="recents-title">Gescand</div>
+      <button class="recents-clear" id="btn-clear">Wis lijst</button>
+    </div>
+    <div class="recents-list" id="recents-list"></div>
+  </div>
+
+</div>
+
+<div class="toast" id="toast">
+  <div class="toast-row">
+    <div class="toast-icon" id="ti"></div>
+    <div class="toast-body">
+      <div class="toast-title" id="tt"></div>
+      <div class="toast-sub"   id="ts"></div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-bg" id="modal">
+  <div class="modal">
+    <div class="modal-tag">Onbekend Product</div>
+    <h3>Voer naam in</h3>
+    <p class="modal-desc">Barcode <span class="modal-code" id="modal-code"></span> is niet herkend. Typ de productnaam om deze op te slaan:</p>
+    <div class="field">
+      <input type="text" id="modal-input" placeholder="bijv. AH Halfvolle Melk">
+    </div>
+    <div class="modal-btns">
+      <button class="btn-ghost" id="modal-skip">Overslaan</button>
+      <button class="btn-add"   id="modal-add">Toevoegen</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ════════════════════════════════════════════
+//  CONFIG & STATE
+// ════════════════════════════════════════════
+const TODOIST = '/api/listonic';
+
+const S = {
+  token:     localStorage.getItem('bs_token'),
+  projectId: localStorage.getItem('bs_project'),
+  scans:     JSON.parse(localStorage.getItem('bs_scans') || '[]'),
+  todayCount: 0,
+  scanning:  false,
+  cooldown:  false,
+  pendingCode: null,
+  projects: []
+};
+
+// ════════════════════════════════════════════
+//  UTILS
+// ════════════════════════════════════════════
+const $ = id => document.getElementById(id);
+
+function timeNow() {
+  const d = new Date();
+  return `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+}
+
+function dateKey() {
+  return new Date().toDateString();
+}
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  $(id).classList.add('active');
+}
+
+function toast(type, title, sub) {
+  const icons = {
+    ok:      '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>',
+    err:     '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>',
+    loading: '<div class="spinner"></div>'
+  };
+  $('ti').className = `toast-icon ${type}`;
+  $('ti').innerHTML = icons[type];
+  $('tt').textContent = title;
+  $('ts').textContent = sub || '';
+  $('toast').classList.add('show');
+  if (type !== 'loading') {
+    setTimeout(() => $('toast').classList.remove('show'), 3200);
+  }
+}
+
+function hideToast() { $('toast').classList.remove('show'); }
+
+function saveScan(name, ok) {
+  S.scans.unshift({ name, ok, time: timeNow(), date: dateKey() });
+  if (S.scans.length > 50) S.scans.pop();
+  localStorage.setItem('bs_scans', JSON.stringify(S.scans));
+  updateStats();
+  renderScans();
+}
+
+function updateStats() {
+  const today = S.scans.filter(s => s.date === dateKey()).length;
+  $('stat-today').textContent = today;
+  $('stat-total').textContent = S.scans.length;
+  const cacheSize = Object.keys(getCache()).length;
+  $('stat-project').textContent = cacheSize;
+}
+
+function renderScans() {
+  const el = $('recents-list');
+  if (!S.scans.length) {
+    el.innerHTML = `<div class="empty-state"><div class="empty-icon">🛒</div><div class="empty-text">Nog niets gescand vandaag</div></div>`;
+    return;
+  }
+  el.innerHTML = S.scans.map(s => `
+    <div class="scan-item ${s.ok ? 'ok' : 'err'}">
+      <div class="scan-icon">${s.ok ? '✓' : '✕'}</div>
+      <div class="scan-details">
+        <div class="scan-name">${s.name}</div>
+        <div class="scan-time">${s.time}</div>
+      </div>
+    </div>`).join('');
+}
+
+// ════════════════════════════════════════════
+//  TODOIST API  (officieel, CORS-vriendelijk!)
+// ════════════════════════════════════════════
+async function todoistGet(path) {
+  const r = await fetch(`${TODOIST}?path=${encodeURIComponent(path)}&token=${S.token}`, {
+    headers: { 'Authorization': `Bearer ${S.token}` }
+  });
+  if (!r.ok) return null;
+  const d = await r.json();
+  return Array.isArray(d) ? d : (d.results || d.lists || d || null);
+}
+
+async function todoistPost(path, body) {
+  const r = await fetch(`${TODOIST}?path=${encodeURIComponent(path)}&token=${S.token}`, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${S.token}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(body)
+  });
+  return r.ok;
+}
+
+async function getProjects() {
+  return await todoistGet('/projects') || [];
+}
+
+async function addTask(content, projectId) {
+  return await todoistPost('/tasks', {
+    content,
+    project_id: projectId
+  });
+}
+
+// ════════════════════════════════════════════
+//  OPEN FOOD FACTS — met slimme fallback
+// ════════════════════════════════════════════
+
+// Lokale cache: barcode → naam (blijft bewaard op telefoon)
+const CACHE_KEY = 'bv_barcode_cache';
+function getCache() {
+  try { return JSON.parse(localStorage.getItem(CACHE_KEY) || '{}'); } 
+  catch { return {}; }
+}
+function saveToCache(code, name) {
+  const cache = getCache();
+  cache[code] = { name, ts: Date.now() };
+  localStorage.setItem(CACHE_KEY, JSON.stringify(cache));
+}
+function getFromCache(code) {
+  const cache = getCache();
+  return cache[code]?.name || null;
+}
+
+async function lookupBarcode(code) {
+  // Stap 1: check lokale cache
+  const cached = getFromCache(code);
+  if (cached) {
+    console.log('Cache hit:', code, '→', cached);
+    return cached;
+  }
+
+  // Stap 2: Open Food Facts
+  try {
+    const r = await fetch(
+      `https://world.openfoodfacts.org/api/v2/product/${code}?fields=product_name_nl,product_name,brands,quantity`,
+      { headers: { 'User-Agent': 'BinScan/1.0 (boodschappenscanner)' } }
+    );
+    const d = await r.json();
+
+    if (d.status === 1 && d.product) {
+      const p = d.product;
+      // Probeer Nederlandse naam eerst, dan Engels
+      const name = (
+        p.product_name_nl ||
+        p.product_name ||
+        ''
+      ).trim();
+
+      const brand = (p.brands || '').split(',')[0].trim();
+      const qty   = (p.quantity || '').trim();
+
+      if (name) {
+        // Bouw een mooie naam op
+        let fullName = name;
+        if (brand && !name.toLowerCase().includes(brand.toLowerCase())) {
+          fullName = `${name} (${brand})`;
+        }
+        if (qty) fullName = `${fullName} ${qty}`;
+
+        // Sla op in cache voor volgende keer
+        saveToCache(code, fullName);
+        return fullName;
+      }
+    }
+  } catch(e) {
+    console.warn('Open Food Facts fout:', e.message);
+  }
+
+  // Niet gevonden
+  return null;
+}
+
+// Cache statistieken tonen
+function getCacheStats() {
+  const cache = getCache();
+  const keys = Object.keys(cache);
+  return { total: keys.length, barcodes: keys };
+}
+
+// ════════════════════════════════════════════
+//  SETUP SCREEN
+// ════════════════════════════════════════════
+$('btn-connect').addEventListener('click', async () => {
+  const token = $('input-token').value.trim();
+  $('setup-error').style.display = 'none';
+
+  if (!token || token.length < 10) {
+    showError('Plak je API token in het veld hierboven.');
+    return;
+  }
+
+  $('btn-connect').textContent = 'Bezig met verbinden...';
+  $('btn-connect').disabled = true;
+  S.token = token;
+
+  let projects = null;
+  try {
+    const controller = new AbortController();
+    const tid = setTimeout(() => controller.abort(), 8000);
+    const r = await fetch('/api/listonic?path=' + encodeURIComponent('/projects') + '&token=' + token, {
+      headers: { 'Authorization': 'Bearer ' + token },
+      signal: controller.signal
+    });
+    clearTimeout(tid);
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    projects = await r.json();
+  } catch(e) {
+    let msg = 'Verbindingsfout. Controleer je token en internet.';
+    if (e.name === 'AbortError') msg = 'Verbinding duurt te lang. Probeer opnieuw.';
+    if (e.message.includes('401') || e.message.includes('403')) msg = 'Token niet geldig. Controleer de Todoist integratie instellingen.';
+    showError(msg);
+    S.token = null;
+    $('btn-connect').textContent = 'Verbinden';
+    $('btn-connect').disabled = false;
+    return;
+  }
+
+  // API geeft {results: [...]} terug
+  if (projects && projects.results) projects = projects.results;
+  if (!projects || !projects.length) {
+    showError('Geen projecten gevonden in je Todoist account.');
+    S.token = null;
+    $('btn-connect').textContent = 'Verbinden';
+    $('btn-connect').disabled = false;
+    return;
+  }
+
+  localStorage.setItem('bs_token', token);
+  S.projects = projects;
+  if (!S.projectId) {
+    S.projectId = projects[0].id;
+    localStorage.setItem('bs_project', S.projectId);
+  }
+
+  loadProjectSelect();
+  updateStats();
+  renderScans();
+  showScreen('screen-main');
+
+  $('btn-connect').textContent = 'Verbinden';
+  $('btn-connect').disabled = false;
+});
+
+$('input-token').addEventListener('keydown', e => {
+  if (e.key === 'Enter') $('btn-connect').click();
+});
+
+function showError(msg) {
+  $('setup-error').textContent = msg;
+  $('setup-error').style.display = 'block';
+}
+
+// ════════════════════════════════════════════
+//  PROJECT SELECT
+// ════════════════════════════════════════════
+function loadProjectSelect() {
+  const sel = $('project-select');
+  sel.innerHTML = S.projects.map(p =>
+    `<option value="${p.id}" ${p.id === S.projectId ? 'selected' : ''}>${p.name}</option>`
+  ).join('');
+  updateProjectLabel();
+}
+
+function updateProjectLabel() {
+  const proj = S.projects.find(p => p.id === S.projectId);
+  $('topbar-project').textContent = proj ? `${proj.name}` : '';
+  updateStats();
+}
+
+$('project-select').addEventListener('change', e => {
+  S.projectId = e.target.value;
+  localStorage.setItem('bs_project', S.projectId);
+  updateProjectLabel();
+});
+
+// ════════════════════════════════════════════
+//  LOGOUT
+// ════════════════════════════════════════════
+$('btn-logout').addEventListener('click', () => {
+  stopScanner();
+  localStorage.removeItem('bs_token');
+  localStorage.removeItem('bs_project');
+  S.token = null;
+  S.projectId = null;
+  showScreen('screen-setup');
+});
+
+// ════════════════════════════════════════════
+//  SCANNER
+// ════════════════════════════════════════════
+function startScanner() {
+  $('placeholder').style.display = 'none';
+  $('scan-line').style.display = 'block';
+  $('scanner-pill').style.display = 'block';
+
+  Quagga.init({
+    inputStream: {
+      type: 'LiveStream',
+      target: $('scanner-viewport'),
+      constraints: {
+        facingMode: 'environment',
+        width: { ideal: 1280 },
+        height: { ideal: 720 }
+      }
+    },
+    decoder: {
+      readers: ['ean_reader', 'ean_8_reader', 'upc_reader', 'upc_e_reader', 'code_128_reader']
+    },
+    locate: true,
+    frequency: 8
+  }, err => {
+    if (err) {
+      toast('err', 'Camera geblokkeerd', 'Geef cameratoestemming in je browser');
+      stopScanner();
+      return;
+    }
+    Quagga.start();
+    S.scanning = true;
+    updateScanBtn();
+  });
+
+  Quagga.onDetected(handleBarcode);
+}
+
+function stopScanner() {
+  try { Quagga.offDetected(handleBarcode); Quagga.stop(); } catch(e) {}
+  S.scanning = false;
+  $('scan-line').style.display = 'none';
+  $('scanner-pill').style.display = 'none';
+  $('placeholder').style.display = 'flex';
+  updateScanBtn();
+}
+
+function updateScanBtn() {
+  const btn = $('btn-scan');
+  if (S.scanning) {
+    btn.classList.add('active');
+    $('btn-icon').innerHTML = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect></svg>';
+    $('btn-text').textContent = 'Stop Scannen';
+  } else {
+    btn.classList.remove('active');
+    $('btn-icon').innerHTML = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7V4h16v3M9 20h6a2 2 0 002-2V9H7v9a2 2 0 002 2z"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>';
+    $('btn-text').textContent = 'Start Scannen';
+  }
+}
+
+$('btn-scan').addEventListener('click', () => {
+  S.scanning ? stopScanner() : startScanner();
+});
+
+// ════════════════════════════════════════════
+//  BARCODE HANDLER
+// ════════════════════════════════════════════
+async function handleBarcode(result) {
+  if (S.cooldown) return;
+  const code = result.codeResult.code;
+  if (!code || code.length < 6) return;
+
+  S.cooldown = true;
+  setTimeout(() => { S.cooldown = false; }, 2800);
+
+  if (navigator.vibrate) navigator.vibrate(100);
+
+  // Check cache eerst (direct feedback)
+  const cached = getFromCache(code);
+  if (cached) {
+    toast('loading', cached, 'Uit geheugen geladen...');
+  } else {
+    toast('loading', 'Opzoeken...', `Barcode: ${code}`);
+  }
+
+  const name = await lookupBarcode(code);
+
+  if (!name) {
+    hideToast();
+    S.pendingCode = code;
+    $('modal-code').textContent = code;
+    $('modal-input').value = '';
+    $('modal').classList.add('open');
+    setTimeout(() => $('modal-input').focus(), 300);
+    return;
+  }
+
+  await addToList(name);
+}
+
+// ════════════════════════════════════════════
+//  ADD TO TODOIST
+// ════════════════════════════════════════════
+async function addToList(name) {
+  if (!S.projectId) {
+    toast('err', 'Geen project', 'Kies eerst een Todoist project');
+    return;
+  }
+
+  const ok = await addTask(name, S.projectId);
+
+  if (ok) {
+    toast('ok', name, 'Toegevoegd aan lijst');
+    saveScan(name, true);
+  } else {
+    toast('err', 'Mislukt', 'Controleer je internetverbinding');
+    saveScan(name, false);
+  }
+}
+
+// ════════════════════════════════════════════
+//  MODAL
+// ════════════════════════════════════════════
+$('modal-add').addEventListener('click', async () => {
+  const name = $('modal-input').value.trim();
+  if (!name) return;
+  $('modal').classList.remove('open');
+  // Sla handmatig ingevoerde naam op in cache
+  if (S.pendingCode) {
+    saveToCache(S.pendingCode, name);
+    console.log('Handmatig opgeslagen in cache:', S.pendingCode, '→', name);
+  }
+  await addToList(name);
+});
+
+$('modal-skip').addEventListener('click', () => {
+  $('modal').classList.remove('open');
+});
+
+$('modal-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') $('modal-add').click();
+});
+
+// ════════════════════════════════════════════
+//  CLEAR
+// ════════════════════════════════════════════
+$('btn-clear').addEventListener('click', () => {
+  S.scans = [];
+  localStorage.removeItem('bs_scans');
+  updateStats();
+  renderScans();
+});
+
+// ════════════════════════════════════════════
+//  INIT
+// ════════════════════════════════════════════
+(async () => {
+  if (S.token) {
+    const projects = await getProjects();
+    if (projects && projects.length) {
+      S.projects = projects;
+      loadProjectSelect();
+      updateStats();
+      renderScans();
+      showScreen('screen-main');
+      return;
+    }
+    localStorage.removeItem('bs_token');
+  }
+  showScreen('screen-setup');
+  renderScans();
+})();
+</script>
+</body>
+</html>
