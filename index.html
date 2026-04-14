@@ -7,40 +7,44 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Binventory">
-<meta name="theme-color" content="#080a0f">
+<meta name="theme-color" content="#0B1120">
 <title>Binventory — Boodschappen Scanner</title>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Clash+Display:wght@600;700&display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script>
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 
 :root {
-  --bg: #080a0f;
-  --surface: #0f1218;
-  --surface2: #161b24;
-  --border: #1e2533;
-  --accent: #e8ff47;
-  --accent-dim: rgba(232,255,71,0.1);
-  --accent2: #47c5ff;
-  --red: #ff4757;
-  --text: #f0f4ff;
-  --muted: #4a5570;
-  --font-h: 'Syne', sans-serif;
-  --font-b: 'DM Sans', sans-serif;
+  --bg: #0B1120; /* Diep donkerblauw/zwart */
+  --surface: #131B2F; /* Iets lichtere surface */
+  --surface2: #1E293B; /* Voor input velden */
+  --border: #2A364F;
+  
+  /* Frisse Smaragdgroene accenten voor boodschappen vibe */
+  --accent: #10B981; 
+  --accent-light: #34D399;
+  --accent-gradient: linear-gradient(135deg, #10B981 0%, #059669 100%);
+  --accent-dim: rgba(16, 185, 129, 0.15);
+  
+  --red: #F43F5E;
+  --text: #F8FAFC;
+  --muted: #94A3B8;
+  --font-main: 'Plus Jakarta Sans', sans-serif;
 }
 
 html, body {
   background: var(--bg);
   color: var(--text);
-  font-family: var(--font-b);
+  font-family: var(--font-main);
   height: 100%;
   overflow: hidden;
   position: fixed;
   width: 100%;
 }
 
-/* Subtle noise texture overlay */
+/* Zeer subtiele noise voor textuur */
 body::after {
   content: '';
   position: fixed;
@@ -48,7 +52,7 @@ body::after {
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
   pointer-events: none;
   z-index: 999;
-  opacity: 0.4;
+  opacity: 0.25;
 }
 
 #app {
@@ -74,1196 +78,92 @@ body::after {
   align-items: center;
   justify-content: center;
   padding: 32px 24px;
-  background: var(--bg);
+  background: radial-gradient(circle at top, #131B2F 0%, var(--bg) 80%);
+}
+
+.setup-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 40px;
+}
+
+.brand-icon {
+  width: 64px;
+  height: 64px;
+  background: var(--accent-gradient);
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+  box-shadow: 0 12px 32px rgba(16, 185, 129, 0.3);
+}
+
+.brand-icon svg {
+  width: 32px;
+  height: 32px;
+  color: #fff;
 }
 
 .setup-logo {
-  font-family: var(--font-h);
-  font-size: 58px;
+  font-size: 48px;
   font-weight: 800;
-  letter-spacing: -2px;
+  letter-spacing: -1.5px;
   line-height: 1;
-  margin-bottom: 4px;
-  position: relative;
+  margin-bottom: 8px;
 }
 
-.setup-logo span.accent { color: var(--accent); }
+.setup-logo span.accent { 
+  color: var(--accent-light); 
+}
 
 .setup-sub {
-  font-size: 12px;
+  font-size: 13px;
   color: var(--muted);
-  letter-spacing: 3px;
+  letter-spacing: 2px;
   text-transform: uppercase;
-  margin-bottom: 44px;
+  font-weight: 600;
 }
 
 .setup-card {
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 24px;
-  padding: 28px 24px 32px;
+  border-radius: 28px;
+  padding: 32px 24px;
   width: 100%;
   max-width: 380px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.4);
 }
 
 .setup-card h2 {
-  font-family: var(--font-h);
-  font-size: 22px;
+  font-size: 20px;
   font-weight: 700;
-  margin-bottom: 6px;
-}
-
-.setup-card p {
-  font-size: 13px;
-  color: var(--muted);
-  line-height: 1.7;
-  margin-bottom: 24px;
+  margin-bottom: 16px;
+  text-align: center;
 }
 
 .setup-card a {
-  color: var(--accent2);
+  color: var(--accent-light);
   text-decoration: none;
+  font-weight: 600;
+  transition: opacity 0.2s;
 }
 
-.field { margin-bottom: 16px; }
+.setup-card a:hover { opacity: 0.8; }
+
+.field { margin-bottom: 20px; }
 
 .field label {
   display: block;
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 700;
-  letter-spacing: 2px;
+  letter-spacing: 1px;
   text-transform: uppercase;
   color: var(--muted);
-  margin-bottom: 8px;
+  margin-bottom: 10px;
 }
 
 .field input, .field select {
   width: 100%;
-  background: var(--surface2);
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  padding: 14px 16px;
-  font-family: var(--font-b);
-  font-size: 14px;
-  color: var(--text);
-  outline: none;
-  transition: border-color 0.2s;
-  -webkit-appearance: none;
-}
-
-.field input:focus, .field select:focus {
-  border-color: var(--accent);
-}
-
-.field input::placeholder { color: var(--muted); }
-
-.btn-main {
-  width: 100%;
-  background: var(--accent);
-  color: #000;
-  border: none;
-  border-radius: 14px;
-  padding: 16px;
-  font-family: var(--font-h);
-  font-size: 19px;
-  font-weight: 700;
-  letter-spacing: 1px;
-  cursor: pointer;
-  margin-top: 4px;
-  transition: opacity 0.15s, transform 0.1s;
-  -webkit-appearance: none;
-}
-
-.btn-main:active { opacity: 0.85; transform: scale(0.98); }
-.btn-main:disabled { opacity: 0.4; }
-
-.setup-error {
-  display: none;
-  background: rgba(255,71,87,0.08);
-  border: 1px solid rgba(255,71,87,0.25);
-  border-radius: 10px;
-  padding: 12px 14px;
-  font-size: 13px;
-  color: var(--red);
-  margin-top: 14px;
-  text-align: center;
-  line-height: 1.5;
-}
-
-.step-hint {
-  background: var(--accent-dim);
-  border: 1px solid rgba(232,255,71,0.2);
-  border-radius: 10px;
-  padding: 12px 14px;
-  font-size: 12px;
-  color: var(--accent);
-  line-height: 1.7;
-  margin-bottom: 20px;
-}
-
-.step-hint strong { display: block; margin-bottom: 2px; font-size: 11px; letter-spacing: 1px; text-transform: uppercase; }
-
-/* ══════════════════════════════════════
-   MAIN SCREEN
-══════════════════════════════════════ */
-#screen-main { background: var(--bg); }
-
-.topbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 52px 20px 14px;
-  flex-shrink: 0;
-}
-
-.topbar-left { display: flex; flex-direction: column; gap: 2px; }
-
-.topbar-brand {
-  font-family: var(--font-h);
-  font-size: 22px;
-  font-weight: 800;
-  letter-spacing: -0.5px;
-}
-
-.topbar-brand span { color: var(--accent); }
-
-.topbar-project {
-  font-size: 11px;
-  color: var(--muted);
-  letter-spacing: 0.5px;
-}
-
-.topbar-right { display: flex; align-items: center; gap: 10px; }
-
-.btn-settings {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 9px 12px;
-  color: var(--muted);
-  font-size: 16px;
-  cursor: pointer;
-  transition: border-color 0.2s, color 0.2s;
-  line-height: 1;
-}
-
-.btn-settings:active { border-color: var(--accent); color: var(--accent); }
-
-/* Scanner */
-.scanner-wrap {
-  flex-shrink: 0;
-  position: relative;
-  margin: 0 16px;
-  border-radius: 22px;
-  overflow: hidden;
-  background: #000;
-  aspect-ratio: 4/3;
-  box-shadow: 0 8px 40px rgba(0,0,0,0.6);
-}
-
-#scanner-viewport {
-  width: 100%;
-  height: 100%;
-  position: relative;
-  overflow: hidden;
-}
-
-#scanner-viewport video {
-  width: 100% !important;
-  height: 100% !important;
-  object-fit: cover !important;
-}
-
-#scanner-viewport canvas.drawingBuffer { display: none !important; }
-
-.scan-overlay {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-}
-
-/* Corner brackets */
-.bracket {
-  position: absolute;
-  width: 28px;
-  height: 28px;
-  border-color: var(--accent);
-  border-style: solid;
-  opacity: 0.9;
-}
-.bracket.tl { top: 20px; left: 20px; border-width: 3px 0 0 3px; border-radius: 6px 0 0 0; }
-.bracket.tr { top: 20px; right: 20px; border-width: 3px 3px 0 0; border-radius: 0 6px 0 0; }
-.bracket.bl { bottom: 20px; left: 20px; border-width: 0 0 3px 3px; border-radius: 0 0 0 6px; }
-.bracket.br { bottom: 20px; right: 20px; border-width: 0 3px 3px 0; border-radius: 0 0 6px 0; }
-
-/* Scan line */
-.scan-line {
-  position: absolute;
-  left: 20px; right: 20px;
-  height: 2px;
-  background: linear-gradient(90deg, transparent, var(--accent), transparent);
-  box-shadow: 0 0 12px var(--accent);
-  animation: sweep 2.2s cubic-bezier(0.45, 0, 0.55, 1) infinite;
-  display: none;
-}
-
-@keyframes sweep {
-  0%   { top: 20px; opacity: 0; }
-  10%  { opacity: 1; }
-  90%  { opacity: 1; }
-  100% { top: calc(100% - 20px); opacity: 0; }
-}
-
-.scanner-placeholder {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  background: var(--surface);
-}
-
-.placeholder-rings {
-  position: relative;
-  width: 64px; height: 64px;
-  display: flex; align-items: center; justify-content: center;
-}
-
-.placeholder-rings::before,
-.placeholder-rings::after {
-  content: '';
-  position: absolute;
-  border-radius: 50%;
-  border: 2px solid var(--muted);
-  opacity: 0.3;
-}
-
-.placeholder-rings::before { width: 64px; height: 64px; }
-.placeholder-rings::after { width: 44px; height: 44px; }
-.placeholder-icon { font-size: 24px; position: relative; z-index: 1; }
-.placeholder-text { font-size: 13px; color: var(--muted); }
-
-/* Status pill */
-.scanner-pill {
-  position: absolute;
-  bottom: 14px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: rgba(8,10,15,0.8);
-  backdrop-filter: blur(8px);
-  border: 1px solid var(--border);
-  border-radius: 100px;
-  padding: 6px 16px;
-  font-size: 12px;
-  font-weight: 500;
-  color: var(--accent);
-  white-space: nowrap;
-  display: none;
-}
-
-/* Scan button */
-.scan-btn-area {
-  padding: 14px 16px 10px;
-  flex-shrink: 0;
-}
-
-.btn-scan {
-  width: 100%;
-  background: var(--accent);
-  color: #000;
-  border: none;
-  border-radius: 18px;
-  padding: 17px;
-  font-family: var(--font-h);
-  font-size: 20px;
-  font-weight: 700;
-  letter-spacing: 1.5px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  transition: opacity 0.15s, transform 0.1s;
-  -webkit-appearance: none;
-}
-
-.btn-scan.active {
-  background: var(--red);
-  color: #fff;
-}
-
-.btn-scan:active { opacity: 0.85; transform: scale(0.99); }
-
-/* Stats row */
-.stats-row {
-  display: flex;
-  gap: 10px;
-  padding: 0 16px 10px;
-  flex-shrink: 0;
-}
-
-.stat-chip {
-  flex: 1;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  padding: 10px 14px;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.stat-num {
-  font-family: var(--font-h);
-  font-size: 22px;
-  font-weight: 700;
-  color: var(--accent);
-}
-
-.stat-label {
-  font-size: 10px;
-  color: var(--muted);
-  letter-spacing: 1px;
-  text-transform: uppercase;
-}
-
-/* Recents */
-.recents-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 4px 20px 10px;
-  flex-shrink: 0;
-}
-
-.recents-title {
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  color: var(--muted);
-}
-
-.recents-clear {
-  font-size: 12px;
-  color: var(--muted);
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 4px 8px;
-  font-family: var(--font-b);
-}
-
-.recents-list {
-  flex: 1;
-  overflow-y: auto;
-  padding: 0 16px 32px;
-  -webkit-overflow-scrolling: touch;
-}
-
-.scan-item {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  padding: 12px 16px;
-  margin-bottom: 8px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  animation: popIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) both;
-}
-
-@keyframes popIn {
-  from { opacity: 0; transform: translateY(8px) scale(0.97); }
-  to   { opacity: 1; transform: none; }
-}
-
-.scan-dot {
-  width: 8px; height: 8px;
-  border-radius: 50%;
-  flex-shrink: 0;
-}
-
-.scan-dot.ok  { background: var(--accent); box-shadow: 0 0 8px var(--accent); }
-.scan-dot.err { background: var(--red); }
-
-.scan-name {
-  flex: 1;
-  font-size: 14px;
-  font-weight: 500;
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.scan-time {
-  font-size: 11px;
-  color: var(--muted);
-  flex-shrink: 0;
-}
-
-.empty-state {
-  text-align: center;
-  padding: 28px 20px;
-  color: var(--muted);
-}
-
-.empty-icon { font-size: 32px; margin-bottom: 8px; opacity: 0.35; }
-.empty-text { font-size: 13px; }
-
-/* ══════════════════════════════════════
-   TOAST
-══════════════════════════════════════ */
-.toast {
-  position: fixed;
-  bottom: 0; left: 0; right: 0;
-  background: var(--surface);
-  border-top: 1px solid var(--border);
-  padding: 16px 20px 34px;
-  transform: translateY(100%);
-  transition: transform 0.32s cubic-bezier(0.34, 1.4, 0.64, 1);
-  z-index: 500;
-  border-radius: 24px 24px 0 0;
-}
-
-.toast.show { transform: translateY(0); }
-
-.toast-row {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-}
-
-.toast-icon {
-  width: 46px; height: 46px;
-  border-radius: 14px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 22px;
-  flex-shrink: 0;
-}
-
-.toast-icon.ok  { background: var(--accent-dim); }
-.toast-icon.err { background: rgba(255,71,87,0.1); }
-.toast-icon.loading { background: rgba(71,197,255,0.1); }
-
-.toast-body { flex: 1; min-width: 0; }
-.toast-title { font-weight: 600; font-size: 15px; margin-bottom: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.toast-sub   { font-size: 12px; color: var(--muted); }
-
-.spinner {
-  width: 20px; height: 20px;
-  border: 2px solid rgba(71,197,255,0.25);
-  border-top-color: var(--accent2);
-  border-radius: 50%;
-  animation: spin 0.65s linear infinite;
-}
-
-@keyframes spin { to { transform: rotate(360deg); } }
-
-/* ══════════════════════════════════════
-   MODAL (manual input)
-══════════════════════════════════════ */
-.modal-bg {
-  display: none;
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.75);
-  backdrop-filter: blur(6px);
-  z-index: 600;
-  align-items: flex-end;
-}
-
-.modal-bg.open { display: flex; }
-
-.modal {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 26px 26px 0 0;
-  padding: 26px 20px 42px;
-  width: 100%;
-  animation: slideUp 0.32s cubic-bezier(0.34, 1.4, 0.64, 1) both;
-}
-
-@keyframes slideUp {
-  from { transform: translateY(100%); }
-  to   { transform: translateY(0); }
-}
-
-.modal-tag {
-  display: inline-block;
-  background: rgba(255,71,87,0.1);
-  color: var(--red);
-  border: 1px solid rgba(255,71,87,0.2);
-  border-radius: 100px;
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  padding: 4px 12px;
-  margin-bottom: 12px;
-}
-
-.modal h3 {
-  font-family: var(--font-h);
-  font-size: 22px;
-  font-weight: 700;
-  margin-bottom: 6px;
-}
-
-.modal-desc {
-  font-size: 13px;
-  color: var(--muted);
-  line-height: 1.6;
-  margin-bottom: 20px;
-}
-
-.modal-code {
-  font-family: monospace;
-  font-size: 12px;
-  background: rgba(232,255,71,0.08);
-  color: var(--accent);
-  border-radius: 6px;
-  padding: 2px 8px;
-}
-
-.modal-btns {
-  display: flex;
-  gap: 10px;
-  margin-top: 16px;
-}
-
-.btn-ghost {
-  flex: 1;
-  background: var(--surface2);
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  padding: 14px;
-  font-family: var(--font-b);
-  font-size: 14px;
-  color: var(--text);
-  cursor: pointer;
-  -webkit-appearance: none;
-}
-
-.btn-add {
-  flex: 2;
-  background: var(--accent);
-  border: none;
-  border-radius: 14px;
-  padding: 14px;
-  font-family: var(--font-h);
-  font-size: 18px;
-  font-weight: 700;
-  color: #000;
-  cursor: pointer;
-  -webkit-appearance: none;
-}
-</style>
-</head>
-<body>
-<div id="app">
-
-  <!-- ══════════ SETUP SCREEN ══════════ -->
-  <div id="screen-setup" class="screen active">
-    <div class="setup-logo">Bin<span class="accent">ventory</span></div>
-    <div class="setup-sub">Boodschappen scanner</div>
-
-    <div class="setup-card">
-      <h2>Koppel Todoist</h2>
-
-      <div class="step-hint">
-        <strong>📋 Hoe kom je aan je token?</strong>
-        1. Ga naar <a href="https://app.todoist.com/app/settings/integrations/developer" target="_blank">todoist.com → Instellingen → Integraties</a><br>
-        2. Scroll naar beneden → kopieer je <strong>API token</strong>
-      </div>
-
-      <div class="field">
-        <label>Todoist API Token</label>
-        <input type="text" id="input-token" placeholder="Plak hier je token..." autocomplete="off" spellcheck="false">
-      </div>
-
-      <button class="btn-main" id="btn-connect">VERBINDEN →</button>
-
-      <div class="setup-error" id="setup-error"></div>
-    </div>
-  </div>
-
-  <!-- ══════════ MAIN SCREEN ══════════ -->
-  <div id="screen-main" class="screen">
-
-    <div class="topbar">
-      <div class="topbar-left">
-        <div class="topbar-brand">Bin<span>ventory</span></div>
-        <div class="topbar-project" id="topbar-project">laden...</div>
-      </div>
-      <div class="topbar-right">
-        <select class="field" id="project-select" style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:8px 12px;font-size:13px;color:var(--text);max-width:130px;margin:0;">
-          <option>Laden...</option>
-        </select>
-        <button class="btn-settings" id="btn-logout" title="Uitloggen">↩</button>
-      </div>
-    </div>
-
-    <!-- Camera -->
-    <div class="scanner-wrap">
-      <div id="scanner-viewport">
-        <div class="scanner-placeholder" id="placeholder">
-          <div class="placeholder-rings">
-            <div class="placeholder-icon">📷</div>
-          </div>
-          <div class="placeholder-text">Druk START om te scannen</div>
-        </div>
-      </div>
-      <div class="scan-overlay">
-        <div class="bracket tl"></div>
-        <div class="bracket tr"></div>
-        <div class="bracket bl"></div>
-        <div class="bracket br"></div>
-        <div class="scan-line" id="scan-line"></div>
-      </div>
-      <div class="scanner-pill" id="scanner-pill">🟢 Scannen actief</div>
-    </div>
-
-    <!-- Scan button -->
-    <div class="scan-btn-area">
-      <button class="btn-scan" id="btn-scan">
-        <span id="btn-icon">📷</span>
-        <span id="btn-text">START SCANNEN</span>
-      </button>
-    </div>
-
-    <!-- Stats -->
-    <div class="stats-row">
-      <div class="stat-chip">
-        <div class="stat-num" id="stat-today">0</div>
-        <div class="stat-label">Vandaag</div>
-      </div>
-      <div class="stat-chip">
-        <div class="stat-num" id="stat-total">0</div>
-        <div class="stat-label">Totaal</div>
-      </div>
-      <div class="stat-chip">
-        <div class="stat-num" id="stat-project">0 🧠</div>
-        <div class="stat-label">Onthouden</div>
-      </div>
-    </div>
-
-    <!-- Recents -->
-    <div class="recents-header">
-      <div class="recents-title">Gescand</div>
-      <button class="recents-clear" id="btn-clear">Wis alles</button>
-    </div>
-    <div class="recents-list" id="recents-list"></div>
-  </div>
-
-</div>
-
-<!-- Toast -->
-<div class="toast" id="toast">
-  <div class="toast-row">
-    <div class="toast-icon" id="ti"></div>
-    <div class="toast-body">
-      <div class="toast-title" id="tt"></div>
-      <div class="toast-sub"   id="ts"></div>
-    </div>
-  </div>
-</div>
-
-<!-- Modal -->
-<div class="modal-bg" id="modal">
-  <div class="modal">
-    <div class="modal-tag">Niet gevonden</div>
-    <h3>Voer naam in</h3>
-    <p class="modal-desc">Barcode <span class="modal-code" id="modal-code"></span> staat niet in de database. Typ de productnaam:</p>
-    <div class="field">
-      <input type="text" id="modal-input" placeholder="bijv. Halfvolle melk AH">
-    </div>
-    <div class="modal-btns">
-      <button class="btn-ghost" id="modal-skip">Overslaan</button>
-      <button class="btn-add"   id="modal-add">TOEVOEGEN</button>
-    </div>
-  </div>
-</div>
-
-<script>
-// ════════════════════════════════════════════
-//  CONFIG & STATE
-// ════════════════════════════════════════════
-const TODOIST = '/api/listonic';
-
-const S = {
-  token:     localStorage.getItem('bs_token'),
-  projectId: localStorage.getItem('bs_project'),
-  scans:     JSON.parse(localStorage.getItem('bs_scans') || '[]'),
-  todayCount: 0,
-  scanning:  false,
-  cooldown:  false,
-  pendingCode: null,
-  projects: []
-};
-
-// ════════════════════════════════════════════
-//  UTILS
-// ════════════════════════════════════════════
-const $ = id => document.getElementById(id);
-
-function timeNow() {
-  const d = new Date();
-  return `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
-}
-
-function dateKey() {
-  return new Date().toDateString();
-}
-
-function showScreen(id) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  $(id).classList.add('active');
-}
-
-function toast(type, title, sub) {
-  const icons = {
-    ok:      '✅',
-    err:     '❌',
-    loading: '<div class="spinner"></div>'
-  };
-  $('ti').className = `toast-icon ${type}`;
-  $('ti').innerHTML = icons[type];
-  $('tt').textContent = title;
-  $('ts').textContent = sub || '';
-  $('toast').classList.add('show');
-  if (type !== 'loading') {
-    setTimeout(() => $('toast').classList.remove('show'), 3200);
-  }
-}
-
-function hideToast() { $('toast').classList.remove('show'); }
-
-function saveScan(name, ok) {
-  S.scans.unshift({ name, ok, time: timeNow(), date: dateKey() });
-  if (S.scans.length > 50) S.scans.pop();
-  localStorage.setItem('bs_scans', JSON.stringify(S.scans));
-  updateStats();
-  renderScans();
-}
-
-function updateStats() {
-  const today = S.scans.filter(s => s.date === dateKey()).length;
-  $('stat-today').textContent = today;
-  $('stat-total').textContent = S.scans.length;
-  const cacheSize = Object.keys(getCache()).length;
-  $('stat-project').textContent = cacheSize + ' 🧠';
-}
-
-function renderScans() {
-  const el = $('recents-list');
-  if (!S.scans.length) {
-    el.innerHTML = `<div class="empty-state"><div class="empty-icon">🛒</div><div class="empty-text">Nog niets gescand</div></div>`;
-    return;
-  }
-  el.innerHTML = S.scans.map(s => `
-    <div class="scan-item">
-      <div class="scan-dot ${s.ok ? 'ok' : 'err'}"></div>
-      <div class="scan-name">${s.name}</div>
-      <div class="scan-time">${s.time}</div>
-    </div>`).join('');
-}
-
-// ════════════════════════════════════════════
-//  TODOIST API  (officieel, CORS-vriendelijk!)
-// ════════════════════════════════════════════
-async function todoistGet(path) {
-  const r = await fetch(`${TODOIST}?path=${encodeURIComponent(path)}&token=${S.token}`, {
-    headers: { 'Authorization': `Bearer ${S.token}` }
-  });
-  if (!r.ok) return null;
-  const d = await r.json();
-  return Array.isArray(d) ? d : (d.results || d.lists || d || null);
-}
-
-async function todoistPost(path, body) {
-  const r = await fetch(`${TODOIST}?path=${encodeURIComponent(path)}&token=${S.token}`, {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${S.token}`,
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(body)
-  });
-  return r.ok;
-}
-
-async function getProjects() {
-  return await todoistGet('/projects') || [];
-}
-
-async function addTask(content, projectId) {
-  return await todoistPost('/tasks', {
-    content,
-    project_id: projectId
-  });
-}
-
-// ════════════════════════════════════════════
-//  OPEN FOOD FACTS — met slimme fallback
-// ════════════════════════════════════════════
-
-// Lokale cache: barcode → naam (blijft bewaard op telefoon)
-const CACHE_KEY = 'bv_barcode_cache';
-function getCache() {
-  try { return JSON.parse(localStorage.getItem(CACHE_KEY) || '{}'); } 
-  catch { return {}; }
-}
-function saveToCache(code, name) {
-  const cache = getCache();
-  cache[code] = { name, ts: Date.now() };
-  localStorage.setItem(CACHE_KEY, JSON.stringify(cache));
-}
-function getFromCache(code) {
-  const cache = getCache();
-  return cache[code]?.name || null;
-}
-
-async function lookupBarcode(code) {
-  // Stap 1: check lokale cache
-  const cached = getFromCache(code);
-  if (cached) {
-    console.log('Cache hit:', code, '→', cached);
-    return cached;
-  }
-
-  // Stap 2: Open Food Facts
-  try {
-    const r = await fetch(
-      `https://world.openfoodfacts.org/api/v2/product/${code}?fields=product_name_nl,product_name,brands,quantity`,
-      { headers: { 'User-Agent': 'BinScan/1.0 (boodschappenscanner)' } }
-    );
-    const d = await r.json();
-
-    if (d.status === 1 && d.product) {
-      const p = d.product;
-      // Probeer Nederlandse naam eerst, dan Engels
-      const name = (
-        p.product_name_nl ||
-        p.product_name ||
-        ''
-      ).trim();
-
-      const brand = (p.brands || '').split(',')[0].trim();
-      const qty   = (p.quantity || '').trim();
-
-      if (name) {
-        // Bouw een mooie naam op
-        let fullName = name;
-        if (brand && !name.toLowerCase().includes(brand.toLowerCase())) {
-          fullName = `${name} (${brand})`;
-        }
-        if (qty) fullName = `${fullName} ${qty}`;
-
-        // Sla op in cache voor volgende keer
-        saveToCache(code, fullName);
-        return fullName;
-      }
-    }
-  } catch(e) {
-    console.warn('Open Food Facts fout:', e.message);
-  }
-
-  // Niet gevonden
-  return null;
-}
-
-// Cache statistieken tonen
-function getCacheStats() {
-  const cache = getCache();
-  const keys = Object.keys(cache);
-  return { total: keys.length, barcodes: keys };
-}
-
-// ════════════════════════════════════════════
-//  SETUP SCREEN
-// ════════════════════════════════════════════
-$('btn-connect').addEventListener('click', async () => {
-  const token = $('input-token').value.trim();
-  $('setup-error').style.display = 'none';
-
-  if (!token || token.length < 10) {
-    showError('Plak je API token in het veld hierboven.');
-    return;
-  }
-
-  $('btn-connect').textContent = 'VERBINDEN...';
-  $('btn-connect').disabled = true;
-  S.token = token;
-
-  let projects = null;
-  try {
-    const controller = new AbortController();
-    const tid = setTimeout(() => controller.abort(), 8000);
-    const r = await fetch('/api/listonic?path=' + encodeURIComponent('/projects') + '&token=' + token, {
-      headers: { 'Authorization': 'Bearer ' + token },
-      signal: controller.signal
-    });
-    clearTimeout(tid);
-    if (!r.ok) throw new Error('HTTP ' + r.status);
-    projects = await r.json();
-  } catch(e) {
-    let msg = 'Verbindingsfout. Controleer je token en internet.';
-    if (e.name === 'AbortError') msg = 'Verbinding duurt te lang. Probeer opnieuw.';
-    if (e.message.includes('401') || e.message.includes('403')) msg = 'Token niet geldig. Kopieer je token opnieuw van todoist.com → Instellingen → Integraties.';
-    showError(msg);
-    S.token = null;
-    $('btn-connect').textContent = 'VERBINDEN →';
-    $('btn-connect').disabled = false;
-    return;
-  }
-
-  // API geeft {results: [...]} terug
-  if (projects && projects.results) projects = projects.results;
-  if (!projects || !projects.length) {
-    showError('Geen projecten gevonden. Maak eerst een project aan in Todoist.');
-    S.token = null;
-    $('btn-connect').textContent = 'VERBINDEN →';
-    $('btn-connect').disabled = false;
-    return;
-  }
-
-  localStorage.setItem('bs_token', token);
-  S.projects = projects;
-  if (!S.projectId) {
-    S.projectId = projects[0].id;
-    localStorage.setItem('bs_project', S.projectId);
-  }
-
-  loadProjectSelect();
-  updateStats();
-  renderScans();
-  showScreen('screen-main');
-
-  $('btn-connect').textContent = 'VERBINDEN →';
-  $('btn-connect').disabled = false;
-});
-
-$('input-token').addEventListener('keydown', e => {
-  if (e.key === 'Enter') $('btn-connect').click();
-});
-
-function showError(msg) {
-  $('setup-error').textContent = msg;
-  $('setup-error').style.display = 'block';
-}
-
-// ════════════════════════════════════════════
-//  PROJECT SELECT
-// ════════════════════════════════════════════
-function loadProjectSelect() {
-  const sel = $('project-select');
-  sel.innerHTML = S.projects.map(p =>
-    `<option value="${p.id}" ${p.id === S.projectId ? 'selected' : ''}>${p.name}</option>`
-  ).join('');
-  updateProjectLabel();
-}
-
-function updateProjectLabel() {
-  const proj = S.projects.find(p => p.id === S.projectId);
-  $('topbar-project').textContent = proj ? `→ ${proj.name}` : '';
-  updateStats();
-}
-
-$('project-select').addEventListener('change', e => {
-  S.projectId = e.target.value;
-  localStorage.setItem('bs_project', S.projectId);
-  updateProjectLabel();
-});
-
-// ════════════════════════════════════════════
-//  LOGOUT
-// ════════════════════════════════════════════
-$('btn-logout').addEventListener('click', () => {
-  stopScanner();
-  localStorage.removeItem('bs_token');
-  localStorage.removeItem('bs_project');
-  S.token = null;
-  S.projectId = null;
-  showScreen('screen-setup');
-});
-
-// ════════════════════════════════════════════
-//  SCANNER
-// ════════════════════════════════════════════
-function startScanner() {
-  $('placeholder').style.display = 'none';
-  $('scan-line').style.display = 'block';
-  $('scanner-pill').style.display = 'block';
-
-  Quagga.init({
-    inputStream: {
-      type: 'LiveStream',
-      target: $('scanner-viewport'),
-      constraints: {
-        facingMode: 'environment',
-        width: { ideal: 1280 },
-        height: { ideal: 720 }
-      }
-    },
-    decoder: {
-      readers: ['ean_reader', 'ean_8_reader', 'upc_reader', 'upc_e_reader', 'code_128_reader']
-    },
-    locate: true,
-    frequency: 8
-  }, err => {
-    if (err) {
-      toast('err', 'Camera geblokkeerd', 'Geef cameratoestemming in je browser');
-      stopScanner();
-      return;
-    }
-    Quagga.start();
-    S.scanning = true;
-    updateScanBtn();
-  });
-
-  Quagga.onDetected(handleBarcode);
-}
-
-function stopScanner() {
-  try { Quagga.offDetected(handleBarcode); Quagga.stop(); } catch(e) {}
-  S.scanning = false;
-  $('scan-line').style.display = 'none';
-  $('scanner-pill').style.display = 'none';
-  $('placeholder').style.display = 'flex';
-  updateScanBtn();
-}
-
-function updateScanBtn() {
-  const btn = $('btn-scan');
-  if (S.scanning) {
-    btn.classList.add('active');
-    $('btn-icon').textContent = '⏹';
-    $('btn-text').textContent = 'STOP SCANNEN';
-  } else {
-    btn.classList.remove('active');
-    $('btn-icon').textContent = '📷';
-    $('btn-text').textContent = 'START SCANNEN';
-  }
-}
-
-$('btn-scan').addEventListener('click', () => {
-  S.scanning ? stopScanner() : startScanner();
-});
-
-// ════════════════════════════════════════════
-//  BARCODE HANDLER
-// ════════════════════════════════════════════
-async function handleBarcode(result) {
-  if (S.cooldown) return;
-  const code = result.codeResult.code;
-  if (!code || code.length < 6) return;
-
-  S.cooldown = true;
-  setTimeout(() => { S.cooldown = false; }, 2800);
-
-  if (navigator.vibrate) navigator.vibrate(100);
-
-  // Check cache eerst (direct feedback)
-  const cached = getFromCache(code);
-  if (cached) {
-    toast('loading', '⚡ ' + cached, 'Uit geheugen...');
-  } else {
-    toast('loading', 'Opzoeken...', code);
-  }
-
-  const name = await lookupBarcode(code);
-
-  if (!name) {
-    hideToast();
-    S.pendingCode = code;
-    $('modal-code').textContent = code;
-    $('modal-input').value = '';
-    $('modal').classList.add('open');
-    setTimeout(() => $('modal-input').focus(), 300);
-    return;
-  }
-
-  await addToList(name);
-}
-
-// ════════════════════════════════════════════
-//  ADD TO TODOIST
-// ════════════════════════════════════════════
-async function addToList(name) {
-  if (!S.projectId) {
-    toast('err', 'Geen project', 'Kies een Todoist project');
-    return;
-  }
-
-  const ok = await addTask(name, S.projectId);
-
-  if (ok) {
-    toast('ok', name, '✓ Toegevoegd aan Todoist!');
-    saveScan(name, true);
-  } else {
-    toast('err', 'Mislukt', 'Controleer je verbinding');
-    saveScan(name, false);
-  }
-}
-
-// ════════════════════════════════════════════
-//  MODAL
-// ════════════════════════════════════════════
-$('modal-add').addEventListener('click', async () => {
-  const name = $('modal-input').value.trim();
-  if (!name) return;
-  $('modal').classList.remove('open');
-  // Sla handmatig ingevoerde naam op in cache
-  if (S.pendingCode) {
-    saveToCache(S.pendingCode, name);
-    console.log('Handmatig opgeslagen in cache:', S.pendingCode, '→', name);
-  }
-  await addToList(name);
-});
-
-$('modal-skip').addEventListener('click', () => {
-  $('modal').classList.remove('open');
-});
-
-$('modal-input').addEventListener('keydown', e => {
-  if (e.key === 'Enter') $('modal-add').click();
-});
-
-// ════════════════════════════════════════════
-//  CLEAR
-// ════════════════════════════════════════════
-$('btn-clear').addEventListener('click', () => {
-  S.scans = [];
-  localStorage.removeItem('bs_scans');
-  updateStats();
-  renderScans();
-});
-
-// ════════════════════════════════════════════
-//  INIT
-// ════════════════════════════════════════════
-(async () => {
-  if (S.token) {
-    const projects = await getProjects();
-    if (projects && projects.length) {
-      S.projects = projects;
-      loadProjectSelect();
-      updateStats();
-      renderScans();
-      showScreen('screen-main');
-      return;
-    }
-    localStorage.removeItem('bs_token');
-  }
-  showScreen('screen-setup');
-  renderScans();
-})();
-</script>
-</body>
-</html>
+  background: var(--surface
