@@ -1,0 +1,23 @@
+{
+  "products": [
+    {
+      "barcode": "8718265100306",
+      "name": "Halfvolle melk",
+      "brand": "AH",
+      "category": "Zuivel"
+    },
+    {
+      "barcode": "8710400317594",
+      "name": "Volkoren boterhammen",
+      "brand": "AH",
+      "category": "Brood"
+    },
+    {
+      "barcode": "8718906561953",
+      "name": "Griekse yoghurt",
+      "brand": "AH",
+      "category": "Zuivel"
+    }
+  ],
+  "info": "Voeg hier producten toe die niet in Open Food Facts staan. Barcode = EAN-13 nummer van het product."
+}
