@@ -7,40 +7,42 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="BinScan">
-<meta name="theme-color" content="#080a0f">
+<meta name="theme-color" content="#0B1120">
 <title>BinScan — Boodschappen Scanner</title>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Clash+Display:wght@600;700&display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script>
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 
 :root {
-  --bg: #080a0f;
-  --surface: #0f1218;
-  --surface2: #161b24;
-  --border: #1e2533;
-  --accent: #e8ff47;
-  --accent-dim: rgba(232,255,71,0.1);
-  --accent2: #47c5ff;
-  --red: #ff4757;
-  --text: #f0f4ff;
-  --muted: #4a5570;
-  --font-h: 'Syne', sans-serif;
-  --font-b: 'DM Sans', sans-serif;
+  --bg: #0B1120;
+  --surface: #131B2F;
+  --surface2: #1E293B;
+  --border: #2A364F;
+  
+  --accent: #10B981; 
+  --accent-light: #34D399;
+  --accent-gradient: linear-gradient(135deg, #10B981 0%, #059669 100%);
+  --accent-dim: rgba(16, 185, 129, 0.15);
+  
+  --red: #F43F5E;
+  --text: #F8FAFC;
+  --muted: #94A3B8;
+  --font-main: 'Plus Jakarta Sans', sans-serif;
 }
 
 html, body {
   background: var(--bg);
   color: var(--text);
-  font-family: var(--font-b);
+  font-family: var(--font-main);
   height: 100%;
   overflow: hidden;
   position: fixed;
   width: 100%;
 }
 
-/* Subtle noise texture overlay */
 body::after {
   content: '';
   position: fixed;
@@ -48,7 +50,7 @@ body::after {
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
   pointer-events: none;
   z-index: 999;
-  opacity: 0.4;
+  opacity: 0.25;
 }
 
 #app {
@@ -68,140 +70,172 @@ body::after {
 .screen.active { display: flex; }
 
 /* ══════════════════════════════════════
-   SETUP SCREEN (API token invoeren)
+   SETUP SCREEN
 ══════════════════════════════════════ */
 #screen-setup {
   align-items: center;
   justify-content: center;
   padding: 32px 24px;
-  background: var(--bg);
+  background: radial-gradient(circle at top, #131B2F 0%, var(--bg) 80%);
+}
+
+.setup-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 40px;
+}
+
+.brand-icon {
+  width: 64px;
+  height: 64px;
+  background: var(--accent-gradient);
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+  box-shadow: 0 12px 32px rgba(16, 185, 129, 0.3);
+}
+
+.brand-icon svg {
+  width: 32px;
+  height: 32px;
+  color: #fff;
 }
 
 .setup-logo {
-  font-family: var(--font-h);
-  font-size: 58px;
+  font-size: 48px;
   font-weight: 800;
-  letter-spacing: -2px;
+  letter-spacing: -1.5px;
   line-height: 1;
-  margin-bottom: 4px;
-  position: relative;
+  margin-bottom: 8px;
 }
 
-.setup-logo span.accent { color: var(--accent); }
+.setup-logo span.accent { color: var(--accent-light); }
 
 .setup-sub {
-  font-size: 12px;
+  font-size: 13px;
   color: var(--muted);
-  letter-spacing: 3px;
+  letter-spacing: 2px;
   text-transform: uppercase;
-  margin-bottom: 44px;
+  font-weight: 600;
 }
 
 .setup-card {
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 24px;
-  padding: 28px 24px 32px;
+  border-radius: 28px;
+  padding: 32px 24px;
   width: 100%;
   max-width: 380px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.4);
 }
 
 .setup-card h2 {
-  font-family: var(--font-h);
-  font-size: 22px;
+  font-size: 20px;
   font-weight: 700;
-  margin-bottom: 6px;
-}
-
-.setup-card p {
-  font-size: 13px;
-  color: var(--muted);
-  line-height: 1.7;
-  margin-bottom: 24px;
+  margin-bottom: 16px;
+  text-align: center;
 }
 
 .setup-card a {
-  color: var(--accent2);
+  color: var(--accent-light);
   text-decoration: none;
+  font-weight: 600;
+  transition: opacity 0.2s;
 }
 
-.field { margin-bottom: 16px; }
+.setup-card a:hover { opacity: 0.8; }
+
+.field { margin-bottom: 20px; }
 
 .field label {
   display: block;
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 700;
-  letter-spacing: 2px;
+  letter-spacing: 1px;
   text-transform: uppercase;
   color: var(--muted);
-  margin-bottom: 8px;
+  margin-bottom: 10px;
 }
 
 .field input, .field select {
   width: 100%;
   background: var(--surface2);
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  padding: 14px 16px;
-  font-family: var(--font-b);
-  font-size: 14px;
+  border: 2px solid transparent;
+  border-radius: 16px;
+  padding: 16px;
+  font-family: var(--font-main);
+  font-size: 15px;
   color: var(--text);
   outline: none;
-  transition: border-color 0.2s;
+  transition: all 0.2s;
   -webkit-appearance: none;
 }
 
 .field input:focus, .field select:focus {
   border-color: var(--accent);
+  background: #192235;
 }
 
 .field input::placeholder { color: var(--muted); }
 
 .btn-main {
   width: 100%;
-  background: var(--accent);
-  color: #000;
+  background: var(--accent-gradient);
+  color: #fff;
   border: none;
-  border-radius: 14px;
+  border-radius: 16px;
   padding: 16px;
-  font-family: var(--font-h);
-  font-size: 19px;
+  font-family: var(--font-main);
+  font-size: 16px;
   font-weight: 700;
-  letter-spacing: 1px;
+  letter-spacing: 0.5px;
   cursor: pointer;
-  margin-top: 4px;
-  transition: opacity 0.15s, transform 0.1s;
+  margin-top: 8px;
+  transition: opacity 0.15s, transform 0.1s, box-shadow 0.2s;
   -webkit-appearance: none;
+  box-shadow: 0 8px 24px rgba(16, 185, 129, 0.25);
 }
 
-.btn-main:active { opacity: 0.85; transform: scale(0.98); }
-.btn-main:disabled { opacity: 0.4; }
+.btn-main:active { opacity: 0.9; transform: scale(0.98); }
+.btn-main:disabled { opacity: 0.5; box-shadow: none; }
 
 .setup-error {
   display: none;
-  background: rgba(255,71,87,0.08);
-  border: 1px solid rgba(255,71,87,0.25);
-  border-radius: 10px;
-  padding: 12px 14px;
+  background: rgba(244, 63, 94, 0.1);
+  border: 1px solid rgba(244, 63, 94, 0.2);
+  border-radius: 12px;
+  padding: 14px;
   font-size: 13px;
+  font-weight: 500;
   color: var(--red);
-  margin-top: 14px;
+  margin-top: 20px;
   text-align: center;
   line-height: 1.5;
 }
 
 .step-hint {
-  background: var(--accent-dim);
-  border: 1px solid rgba(232,255,71,0.2);
-  border-radius: 10px;
-  padding: 12px 14px;
-  font-size: 12px;
-  color: var(--accent);
-  line-height: 1.7;
-  margin-bottom: 20px;
+  background: var(--surface2);
+  border-radius: 16px;
+  padding: 16px;
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.6;
+  margin-bottom: 24px;
 }
 
-.step-hint strong { display: block; margin-bottom: 2px; font-size: 11px; letter-spacing: 1px; text-transform: uppercase; }
+.step-hint strong { 
+  display: flex; 
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 8px; 
+  font-size: 12px; 
+  color: var(--text);
+  text-transform: uppercase; 
+  letter-spacing: 0.5px;
+}
 
 /* ══════════════════════════════════════
    MAIN SCREEN
@@ -212,25 +246,40 @@ body::after {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 52px 20px 14px;
+  padding: 56px 20px 20px;
   flex-shrink: 0;
 }
 
-.topbar-left { display: flex; flex-direction: column; gap: 2px; }
+.topbar-left { display: flex; align-items: center; gap: 12px; }
 
-.topbar-brand {
-  font-family: var(--font-h);
-  font-size: 22px;
-  font-weight: 800;
-  letter-spacing: -0.5px;
+.topbar-logo-small {
+  width: 36px;
+  height: 36px;
+  background: var(--accent-gradient);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
 }
 
-.topbar-brand span { color: var(--accent); }
+.topbar-logo-small svg { width: 18px; height: 18px; color: #fff; }
+
+.topbar-brand-text { display: flex; flex-direction: column; }
+
+.topbar-brand {
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  line-height: 1.1;
+}
+
+.topbar-brand span { color: var(--accent-light); }
 
 .topbar-project {
-  font-size: 11px;
+  font-size: 12px;
   color: var(--muted);
-  letter-spacing: 0.5px;
+  font-weight: 500;
 }
 
 .topbar-right { display: flex; align-items: center; gap: 10px; }
@@ -239,26 +288,29 @@ body::after {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 12px;
-  padding: 9px 12px;
+  padding: 10px;
   color: var(--muted);
-  font-size: 16px;
   cursor: pointer;
-  transition: border-color 0.2s, color 0.2s;
-  line-height: 1;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.btn-settings:active { border-color: var(--accent); color: var(--accent); }
+.btn-settings svg { width: 18px; height: 18px; fill: currentColor; }
+.btn-settings:active { border-color: var(--accent); color: var(--accent); background: var(--surface2); }
 
 /* Scanner */
 .scanner-wrap {
   flex-shrink: 0;
   position: relative;
   margin: 0 16px;
-  border-radius: 22px;
+  border-radius: 28px;
   overflow: hidden;
   background: #000;
   aspect-ratio: 4/3;
-  box-shadow: 0 8px 40px rgba(0,0,0,0.6);
+  box-shadow: 0 16px 40px rgba(0,0,0,0.5);
+  border: 1px solid rgba(255,255,255,0.05);
 }
 
 #scanner-viewport {
@@ -282,28 +334,27 @@ body::after {
   pointer-events: none;
 }
 
-/* Corner brackets */
 .bracket {
   position: absolute;
-  width: 28px;
-  height: 28px;
+  width: 40px;
+  height: 40px;
   border-color: var(--accent);
   border-style: solid;
-  opacity: 0.9;
+  opacity: 0.8;
+  border-radius: 12px;
 }
-.bracket.tl { top: 20px; left: 20px; border-width: 3px 0 0 3px; border-radius: 6px 0 0 0; }
-.bracket.tr { top: 20px; right: 20px; border-width: 3px 3px 0 0; border-radius: 0 6px 0 0; }
-.bracket.bl { bottom: 20px; left: 20px; border-width: 0 0 3px 3px; border-radius: 0 0 0 6px; }
-.bracket.br { bottom: 20px; right: 20px; border-width: 0 3px 3px 0; border-radius: 0 0 6px 0; }
+.bracket.tl { top: 24px; left: 24px; border-width: 4px 0 0 4px; border-bottom-right-radius: 0; border-top-right-radius: 0; border-bottom-left-radius: 0; }
+.bracket.tr { top: 24px; right: 24px; border-width: 4px 4px 0 0; border-bottom-left-radius: 0; border-top-left-radius: 0; border-bottom-right-radius: 0; }
+.bracket.bl { bottom: 24px; left: 24px; border-width: 0 0 4px 4px; border-top-right-radius: 0; border-bottom-right-radius: 0; border-top-left-radius: 0; }
+.bracket.br { bottom: 24px; right: 24px; border-width: 0 4px 4px 0; border-top-left-radius: 0; border-bottom-left-radius: 0; border-top-right-radius: 0; }
 
-/* Scan line */
 .scan-line {
   position: absolute;
   left: 20px; right: 20px;
   height: 2px;
-  background: linear-gradient(90deg, transparent, var(--accent), transparent);
-  box-shadow: 0 0 12px var(--accent);
-  animation: sweep 2.2s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+  background: var(--red);
+  box-shadow: 0 0 16px 2px rgba(244, 63, 94, 0.6);
+  animation: sweep 2.5s cubic-bezier(0.45, 0, 0.55, 1) infinite;
   display: none;
 }
 
@@ -321,86 +372,78 @@ body::after {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 12px;
+  gap: 16px;
   background: var(--surface);
 }
 
 .placeholder-rings {
   position: relative;
-  width: 64px; height: 64px;
+  width: 72px; height: 72px;
   display: flex; align-items: center; justify-content: center;
-}
-
-.placeholder-rings::before,
-.placeholder-rings::after {
-  content: '';
-  position: absolute;
+  background: var(--surface2);
   border-radius: 50%;
-  border: 2px solid var(--muted);
-  opacity: 0.3;
 }
 
-.placeholder-rings::before { width: 64px; height: 64px; }
-.placeholder-rings::after { width: 44px; height: 44px; }
-.placeholder-icon { font-size: 24px; position: relative; z-index: 1; }
-.placeholder-text { font-size: 13px; color: var(--muted); }
+.placeholder-icon { font-size: 28px; position: relative; z-index: 1; }
+.placeholder-text { font-size: 14px; color: var(--muted); font-weight: 500; }
 
-/* Status pill */
 .scanner-pill {
   position: absolute;
-  bottom: 14px;
+  bottom: 16px;
   left: 50%;
   transform: translateX(-50%);
-  background: rgba(8,10,15,0.8);
-  backdrop-filter: blur(8px);
-  border: 1px solid var(--border);
+  background: rgba(19, 27, 47, 0.85);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,0.1);
   border-radius: 100px;
-  padding: 6px 16px;
-  font-size: 12px;
-  font-weight: 500;
-  color: var(--accent);
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--accent-light);
   white-space: nowrap;
   display: none;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
 }
 
 /* Scan button */
 .scan-btn-area {
-  padding: 14px 16px 10px;
+  padding: 20px 16px 16px;
   flex-shrink: 0;
 }
 
 .btn-scan {
   width: 100%;
-  background: var(--accent);
-  color: #000;
+  background: var(--accent-gradient);
+  color: #fff;
   border: none;
-  border-radius: 18px;
-  padding: 17px;
-  font-family: var(--font-h);
-  font-size: 20px;
+  border-radius: 20px;
+  padding: 18px;
+  font-family: var(--font-main);
+  font-size: 18px;
   font-weight: 700;
-  letter-spacing: 1.5px;
+  letter-spacing: 0.5px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
-  transition: opacity 0.15s, transform 0.1s;
+  gap: 12px;
+  transition: all 0.2s;
   -webkit-appearance: none;
+  box-shadow: 0 8px 24px rgba(16, 185, 129, 0.25);
 }
 
 .btn-scan.active {
   background: var(--red);
-  color: #fff;
+  box-shadow: 0 8px 24px rgba(244, 63, 94, 0.25);
 }
 
-.btn-scan:active { opacity: 0.85; transform: scale(0.99); }
+.btn-scan:active { transform: scale(0.98); }
 
 /* Stats row */
 .stats-row {
   display: flex;
-  gap: 10px;
-  padding: 0 16px 10px;
+  gap: 12px;
+  padding: 0 16px 16px;
   flex-shrink: 0;
 }
 
@@ -408,24 +451,25 @@ body::after {
   flex: 1;
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 14px;
-  padding: 10px 14px;
+  border-radius: 20px;
+  padding: 16px;
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  align-items: center;
+  gap: 4px;
 }
 
 .stat-num {
-  font-family: var(--font-h);
-  font-size: 22px;
-  font-weight: 700;
-  color: var(--accent);
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--text);
 }
 
 .stat-label {
-  font-size: 10px;
+  font-size: 11px;
   color: var(--muted);
-  letter-spacing: 1px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
   text-transform: uppercase;
 }
 
@@ -434,27 +478,32 @@ body::after {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 4px 20px 10px;
+  padding: 8px 20px 12px;
   flex-shrink: 0;
 }
 
 .recents-title {
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 700;
-  letter-spacing: 2px;
+  letter-spacing: 1px;
   text-transform: uppercase;
-  color: var(--muted);
+  color: var(--text);
 }
 
 .recents-clear {
   font-size: 12px;
   color: var(--muted);
-  background: none;
-  border: none;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
   cursor: pointer;
-  padding: 4px 8px;
-  font-family: var(--font-b);
+  padding: 6px 12px;
+  font-family: var(--font-main);
+  font-weight: 600;
+  transition: all 0.2s;
 }
+
+.recents-clear:active { background: var(--surface2); }
 
 .recents-list {
   flex: 1;
@@ -467,52 +516,66 @@ body::after {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 16px;
-  padding: 12px 16px;
-  margin-bottom: 8px;
+  padding: 16px;
+  margin-bottom: 10px;
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 14px;
   animation: popIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) both;
 }
 
 @keyframes popIn {
-  from { opacity: 0; transform: translateY(8px) scale(0.97); }
+  from { opacity: 0; transform: translateY(12px) scale(0.98); }
   to   { opacity: 1; transform: none; }
 }
 
-.scan-dot {
-  width: 8px; height: 8px;
-  border-radius: 50%;
+.scan-icon {
+  width: 36px; height: 36px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   flex-shrink: 0;
+  font-size: 16px;
 }
 
-.scan-dot.ok  { background: var(--accent); box-shadow: 0 0 8px var(--accent); }
-.scan-dot.err { background: var(--red); }
+.scan-item.ok .scan-icon { background: var(--accent-dim); color: var(--accent-light); }
+.scan-item.err .scan-icon { background: rgba(244, 63, 94, 0.1); color: var(--red); }
+
+.scan-details { flex: 1; min-width: 0; }
 
 .scan-name {
-  flex: 1;
-  font-size: 14px;
-  font-weight: 500;
-  min-width: 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  margin-bottom: 2px;
 }
 
 .scan-time {
-  font-size: 11px;
+  font-size: 12px;
   color: var(--muted);
-  flex-shrink: 0;
+  font-weight: 500;
 }
 
 .empty-state {
   text-align: center;
-  padding: 28px 20px;
+  padding: 40px 20px;
   color: var(--muted);
 }
 
-.empty-icon { font-size: 32px; margin-bottom: 8px; opacity: 0.35; }
-.empty-text { font-size: 13px; }
+.empty-icon { 
+  width: 64px; height: 64px; 
+  background: var(--surface); 
+  border-radius: 50%; 
+  display: flex; align-items: center; justify-content: center;
+  font-size: 28px; 
+  margin: 0 auto 16px; 
+  opacity: 0.5; 
+}
+.empty-text { font-size: 14px; font-weight: 500; }
 
 /* ══════════════════════════════════════
    TOAST
@@ -520,13 +583,16 @@ body::after {
 .toast {
   position: fixed;
   bottom: 0; left: 0; right: 0;
-  background: var(--surface);
-  border-top: 1px solid var(--border);
-  padding: 16px 20px 34px;
+  background: rgba(19, 27, 47, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-top: 1px solid rgba(255,255,255,0.05);
+  padding: 20px 24px 36px;
   transform: translateY(100%);
-  transition: transform 0.32s cubic-bezier(0.34, 1.4, 0.64, 1);
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
   z-index: 500;
-  border-radius: 24px 24px 0 0;
+  border-radius: 32px 32px 0 0;
+  box-shadow: 0 -10px 40px rgba(0,0,0,0.3);
 }
 
 .toast.show { transform: translateY(0); }
@@ -534,11 +600,11 @@ body::after {
 .toast-row {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 16px;
 }
 
 .toast-icon {
-  width: 46px; height: 46px;
+  width: 48px; height: 48px;
   border-radius: 14px;
   display: flex;
   align-items: center;
@@ -547,33 +613,34 @@ body::after {
   flex-shrink: 0;
 }
 
-.toast-icon.ok  { background: var(--accent-dim); }
-.toast-icon.err { background: rgba(255,71,87,0.1); }
-.toast-icon.loading { background: rgba(71,197,255,0.1); }
+.toast-icon.ok  { background: var(--accent-gradient); color: #fff; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3); }
+.toast-icon.err { background: var(--red); color: #fff; }
+.toast-icon.loading { background: var(--surface2); }
 
 .toast-body { flex: 1; min-width: 0; }
-.toast-title { font-weight: 600; font-size: 15px; margin-bottom: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.toast-sub   { font-size: 12px; color: var(--muted); }
+.toast-title { font-weight: 700; font-size: 16px; margin-bottom: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #fff;}
+.toast-sub   { font-size: 13px; color: var(--muted); font-weight: 500; }
 
 .spinner {
-  width: 20px; height: 20px;
-  border: 2px solid rgba(71,197,255,0.25);
-  border-top-color: var(--accent2);
+  width: 22px; height: 22px;
+  border: 3px solid rgba(255,255,255,0.1);
+  border-top-color: var(--accent-light);
   border-radius: 50%;
-  animation: spin 0.65s linear infinite;
+  animation: spin 0.7s linear infinite;
 }
 
 @keyframes spin { to { transform: rotate(360deg); } }
 
 /* ══════════════════════════════════════
-   MODAL (manual input)
+   MODAL
 ══════════════════════════════════════ */
 .modal-bg {
   display: none;
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.75);
-  backdrop-filter: blur(6px);
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   z-index: 600;
   align-items: flex-end;
 }
@@ -581,12 +648,13 @@ body::after {
 .modal-bg.open { display: flex; }
 
 .modal {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 26px 26px 0 0;
-  padding: 26px 20px 42px;
+  background: var(--bg);
+  border-top: 1px solid var(--border);
+  border-radius: 32px 32px 0 0;
+  padding: 32px 24px 48px;
   width: 100%;
-  animation: slideUp 0.32s cubic-bezier(0.34, 1.4, 0.64, 1) both;
+  animation: slideUp 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  box-shadow: 0 -10px 40px rgba(0,0,0,0.4);
 }
 
 @keyframes slideUp {
@@ -596,125 +664,150 @@ body::after {
 
 .modal-tag {
   display: inline-block;
-  background: rgba(255,71,87,0.1);
+  background: rgba(244, 63, 94, 0.15);
   color: var(--red);
-  border: 1px solid rgba(255,71,87,0.2);
-  border-radius: 100px;
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 1px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
   text-transform: uppercase;
-  padding: 4px 12px;
-  margin-bottom: 12px;
+  padding: 6px 12px;
+  margin-bottom: 16px;
 }
 
 .modal h3 {
-  font-family: var(--font-h);
   font-size: 22px;
-  font-weight: 700;
-  margin-bottom: 6px;
+  font-weight: 800;
+  margin-bottom: 8px;
+  color: var(--text);
 }
 
 .modal-desc {
-  font-size: 13px;
+  font-size: 14px;
   color: var(--muted);
   line-height: 1.6;
-  margin-bottom: 20px;
+  margin-bottom: 24px;
 }
 
 .modal-code {
   font-family: monospace;
-  font-size: 12px;
-  background: rgba(232,255,71,0.08);
-  color: var(--accent);
+  font-size: 13px;
+  background: var(--surface2);
+  color: var(--text);
   border-radius: 6px;
-  padding: 2px 8px;
+  padding: 3px 8px;
+  font-weight: 600;
 }
 
 .modal-btns {
   display: flex;
-  gap: 10px;
-  margin-top: 16px;
+  gap: 12px;
+  margin-top: 20px;
 }
 
 .btn-ghost {
   flex: 1;
-  background: var(--surface2);
+  background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 14px;
-  padding: 14px;
-  font-family: var(--font-b);
-  font-size: 14px;
+  border-radius: 16px;
+  padding: 16px;
+  font-family: var(--font-main);
+  font-size: 15px;
+  font-weight: 600;
   color: var(--text);
   cursor: pointer;
   -webkit-appearance: none;
+  transition: all 0.2s;
 }
+
+.btn-ghost:active { background: var(--surface2); }
 
 .btn-add {
   flex: 2;
-  background: var(--accent);
+  background: var(--accent-gradient);
   border: none;
-  border-radius: 14px;
-  padding: 14px;
-  font-family: var(--font-h);
-  font-size: 18px;
+  border-radius: 16px;
+  padding: 16px;
+  font-family: var(--font-main);
+  font-size: 16px;
   font-weight: 700;
-  color: #000;
+  color: #fff;
   cursor: pointer;
   -webkit-appearance: none;
+  box-shadow: 0 8px 20px rgba(16, 185, 129, 0.25);
 }
+
+.btn-add:active { transform: scale(0.98); }
 </style>
 </head>
 <body>
 <div id="app">
 
-  <!-- ══════════ SETUP SCREEN ══════════ -->
   <div id="screen-setup" class="screen active">
-    <div class="setup-logo">Bin<span class="accent">Scan</span></div>
-    <div class="setup-sub">Boodschappen scanner</div>
+    
+    <div class="setup-header">
+      <div class="brand-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 7V4h16v3M9 20h6a2 2 0 002-2V9H7v9a2 2 0 002 2z"></path>
+          <line x1="10" y1="11" x2="10" y2="17"></line>
+          <line x1="14" y1="11" x2="14" y2="17"></line>
+        </svg>
+      </div>
+      <div class="setup-logo">Bin<span class="accent">Scan</span></div>
+      <div class="setup-sub">Boodschappen Scanner</div>
+    </div>
 
     <div class="setup-card">
       <h2>Koppel Todoist</h2>
 
       <div class="step-hint">
-        <strong>📋 Hoe kom je aan je token?</strong>
-        1. Ga naar <a href="https://app.todoist.com/app/settings/integrations/developer" target="_blank">todoist.com → Instellingen → Integraties</a><br>
-        2. Scroll naar beneden → kopieer je <strong>API token</strong>
+        <strong>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent-light)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+          API Token
+        </strong>
+        Ga naar <a href="https://app.todoist.com/app/settings/integrations/developer" target="_blank">Todoist Instellingen</a>, scroll naar beneden en kopieer je API token.
       </div>
 
       <div class="field">
-        <label>Todoist API Token</label>
-        <input type="text" id="input-token" placeholder="Plak hier je token..." autocomplete="off" spellcheck="false">
+        <label>Jouw Todoist Token</label>
+        <input type="text" id="input-token" placeholder="Plak token..." autocomplete="off" spellcheck="false">
       </div>
 
-      <button class="btn-main" id="btn-connect">VERBINDEN →</button>
+      <button class="btn-main" id="btn-connect">Verbinden</button>
 
       <div class="setup-error" id="setup-error"></div>
     </div>
   </div>
 
-  <!-- ══════════ MAIN SCREEN ══════════ -->
   <div id="screen-main" class="screen">
 
     <div class="topbar">
       <div class="topbar-left">
-        <div class="topbar-brand">Bin<span>Scan</span></div>
-        <div class="topbar-project" id="topbar-project">laden...</div>
+        <div class="topbar-logo-small">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 7V4h16v3M9 20h6a2 2 0 002-2V9H7v9a2 2 0 002 2z"></path>
+          </svg>
+        </div>
+        <div class="topbar-brand-text">
+          <div class="topbar-brand">Bin<span>Scan</span></div>
+          <div class="topbar-project" id="topbar-project">laden...</div>
+        </div>
       </div>
       <div class="topbar-right">
-        <select class="field" id="project-select" style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:8px 12px;font-size:13px;color:var(--text);max-width:130px;margin:0;">
+        <select class="field" id="project-select" style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:8px 12px;font-size:13px;font-weight:600;color:var(--text);max-width:130px;margin:0;">
           <option>Laden...</option>
         </select>
-        <button class="btn-settings" id="btn-logout" title="Uitloggen">↩</button>
+        <button class="btn-settings" id="btn-logout" title="Uitloggen">
+          <svg viewBox="0 0 24 24"><path d="M16 17l5-5-5-5M21 12H9M9 3H4a2 2 0 00-2 2v14a2 2 0 002 2h5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
       </div>
     </div>
 
-    <!-- Camera -->
     <div class="scanner-wrap">
       <div id="scanner-viewport">
         <div class="scanner-placeholder" id="placeholder">
           <div class="placeholder-rings">
-            <div class="placeholder-icon">📷</div>
+            <div class="placeholder-icon">📸</div>
           </div>
           <div class="placeholder-text">Druk START om te scannen</div>
         </div>
@@ -726,18 +819,21 @@ body::after {
         <div class="bracket br"></div>
         <div class="scan-line" id="scan-line"></div>
       </div>
-      <div class="scanner-pill" id="scanner-pill">🟢 Scannen actief</div>
+      <div class="scanner-pill" id="scanner-pill">
+        <span style="display:inline-block;width:8px;height:8px;background:var(--accent-light);border-radius:50%;margin-right:6px;box-shadow:0 0 8px var(--accent-light);"></span>
+        Camera actief
+      </div>
     </div>
 
-    <!-- Scan button -->
     <div class="scan-btn-area">
       <button class="btn-scan" id="btn-scan">
-        <span id="btn-icon">📷</span>
-        <span id="btn-text">START SCANNEN</span>
+        <span id="btn-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7V4h16v3M9 20h6a2 2 0 002-2V9H7v9a2 2 0 002 2z"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+        </span>
+        <span id="btn-text">Start Scannen</span>
       </button>
     </div>
 
-    <!-- Stats -->
     <div class="stats-row">
       <div class="stat-chip">
         <div class="stat-num" id="stat-today">0</div>
@@ -748,22 +844,20 @@ body::after {
         <div class="stat-label">Totaal</div>
       </div>
       <div class="stat-chip">
-        <div class="stat-num" id="stat-project">0 🧠</div>
+        <div class="stat-num" id="stat-project" style="color: var(--accent-light);">0</div>
         <div class="stat-label">Onthouden</div>
       </div>
     </div>
 
-    <!-- Recents -->
     <div class="recents-header">
       <div class="recents-title">Gescand</div>
-      <button class="recents-clear" id="btn-clear">Wis alles</button>
+      <button class="recents-clear" id="btn-clear">Wis lijst</button>
     </div>
     <div class="recents-list" id="recents-list"></div>
   </div>
 
 </div>
 
-<!-- Toast -->
 <div class="toast" id="toast">
   <div class="toast-row">
     <div class="toast-icon" id="ti"></div>
@@ -774,18 +868,17 @@ body::after {
   </div>
 </div>
 
-<!-- Modal -->
 <div class="modal-bg" id="modal">
   <div class="modal">
-    <div class="modal-tag">Niet gevonden</div>
+    <div class="modal-tag">Onbekend Product</div>
     <h3>Voer naam in</h3>
-    <p class="modal-desc">Barcode <span class="modal-code" id="modal-code"></span> staat niet in de database. Typ de productnaam:</p>
+    <p class="modal-desc">Barcode <span class="modal-code" id="modal-code"></span> is niet herkend. Typ de productnaam om deze op te slaan:</p>
     <div class="field">
-      <input type="text" id="modal-input" placeholder="bijv. Halfvolle melk AH">
+      <input type="text" id="modal-input" placeholder="bijv. AH Halfvolle Melk">
     </div>
     <div class="modal-btns">
       <button class="btn-ghost" id="modal-skip">Overslaan</button>
-      <button class="btn-add"   id="modal-add">TOEVOEGEN</button>
+      <button class="btn-add"   id="modal-add">Toevoegen</button>
     </div>
   </div>
 </div>
@@ -828,8 +921,8 @@ function showScreen(id) {
 
 function toast(type, title, sub) {
   const icons = {
-    ok:      '✅',
-    err:     '❌',
+    ok:      '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>',
+    err:     '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>',
     loading: '<div class="spinner"></div>'
   };
   $('ti').className = `toast-icon ${type}`;
@@ -857,25 +950,27 @@ function updateStats() {
   $('stat-today').textContent = today;
   $('stat-total').textContent = S.scans.length;
   const cacheSize = Object.keys(getCache()).length;
-  $('stat-project').textContent = cacheSize + ' 🧠';
+  $('stat-project').textContent = cacheSize;
 }
 
 function renderScans() {
   const el = $('recents-list');
   if (!S.scans.length) {
-    el.innerHTML = `<div class="empty-state"><div class="empty-icon">🛒</div><div class="empty-text">Nog niets gescand</div></div>`;
+    el.innerHTML = `<div class="empty-state"><div class="empty-icon">🛒</div><div class="empty-text">Nog niets gescand vandaag</div></div>`;
     return;
   }
   el.innerHTML = S.scans.map(s => `
-    <div class="scan-item">
-      <div class="scan-dot ${s.ok ? 'ok' : 'err'}"></div>
-      <div class="scan-name">${s.name}</div>
-      <div class="scan-time">${s.time}</div>
+    <div class="scan-item ${s.ok ? 'ok' : 'err'}">
+      <div class="scan-icon">${s.ok ? '✓' : '✕'}</div>
+      <div class="scan-details">
+        <div class="scan-name">${s.name}</div>
+        <div class="scan-time">${s.time}</div>
+      </div>
     </div>`).join('');
 }
 
 // ════════════════════════════════════════════
-//  TODOIST API  (officieel, CORS-vriendelijk!)
+//  TODOIST API
 // ════════════════════════════════════════════
 async function todoistGet(path) {
   const r = await fetch(`${TODOIST}?path=${encodeURIComponent(path)}&token=${S.token}`, {
@@ -910,10 +1005,8 @@ async function addTask(content, projectId) {
 }
 
 // ════════════════════════════════════════════
-//  OPEN FOOD FACTS — met slimme fallback
+//  CACHE & LOKALE DB
 // ════════════════════════════════════════════
-
-// Lokale cache: barcode → naam (blijft bewaard op telefoon)
 const CACHE_KEY = 'bs_barcode_cache';
 function getCache() {
   try { return JSON.parse(localStorage.getItem(CACHE_KEY) || '{}'); } 
@@ -929,9 +1022,6 @@ function getFromCache(code) {
   return cache[code]?.name || null;
 }
 
-// ════════════════════════════════════════════
-//  LOKALE DATABASE (products.json in GitHub repo)
-// ════════════════════════════════════════════
 let localDB = null;
 
 async function getLocalDB() {
@@ -955,9 +1045,6 @@ async function getLocalDB() {
 
 // ════════════════════════════════════════════
 //  BARCODE OPZOEKEN — 3 lagen
-//  1. Lokale cache (snel, offline)
-//  2. Open Food Facts (online, gratis)
-//  3. Lokale products.json (eigen database)
 // ════════════════════════════════════════════
 async function lookupBarcode(code) {
 
@@ -972,7 +1059,7 @@ async function lookupBarcode(code) {
   try {
     const r = await fetch(
       `https://world.openfoodfacts.org/api/v2/product/${code}?fields=product_name_nl,product_name,brands,quantity`,
-      { headers: { 'User-Agent': 'Binventory/1.0 (boodschappenscanner)' } }
+      { headers: { 'User-Agent': 'BinScan/1.0 (boodschappenscanner)' } }
     );
     const d = await r.json();
 
@@ -1009,15 +1096,9 @@ async function lookupBarcode(code) {
     console.warn('Lokale DB fout:', e.message);
   }
 
-  // ── Niet gevonden in alle 3 bronnen ───────
+  // ── Niet gevonden ───────
   console.warn('❌ Niet gevonden:', code);
   return null;
-}
-
-// Cache statistieken
-function getCacheStats() {
-  const cache = getCache();
-  return { total: Object.keys(cache).length };
 }
 
 // ════════════════════════════════════════════
@@ -1032,7 +1113,7 @@ $('btn-connect').addEventListener('click', async () => {
     return;
   }
 
-  $('btn-connect').textContent = 'VERBINDEN...';
+  $('btn-connect').textContent = 'Bezig met verbinden...';
   $('btn-connect').disabled = true;
   S.token = token;
 
@@ -1050,20 +1131,19 @@ $('btn-connect').addEventListener('click', async () => {
   } catch(e) {
     let msg = 'Verbindingsfout. Controleer je token en internet.';
     if (e.name === 'AbortError') msg = 'Verbinding duurt te lang. Probeer opnieuw.';
-    if (e.message.includes('401') || e.message.includes('403')) msg = 'Token niet geldig. Kopieer je token opnieuw van todoist.com → Instellingen → Integraties.';
+    if (e.message.includes('401') || e.message.includes('403')) msg = 'Token niet geldig. Controleer de Todoist integratie instellingen.';
     showError(msg);
     S.token = null;
-    $('btn-connect').textContent = 'VERBINDEN →';
+    $('btn-connect').textContent = 'Verbinden';
     $('btn-connect').disabled = false;
     return;
   }
 
-  // API geeft {results: [...]} terug
   if (projects && projects.results) projects = projects.results;
   if (!projects || !projects.length) {
-    showError('Geen projecten gevonden. Maak eerst een project aan in Todoist.');
+    showError('Geen projecten gevonden in je Todoist account.');
     S.token = null;
-    $('btn-connect').textContent = 'VERBINDEN →';
+    $('btn-connect').textContent = 'Verbinden';
     $('btn-connect').disabled = false;
     return;
   }
@@ -1080,7 +1160,7 @@ $('btn-connect').addEventListener('click', async () => {
   renderScans();
   showScreen('screen-main');
 
-  $('btn-connect').textContent = 'VERBINDEN →';
+  $('btn-connect').textContent = 'Verbinden';
   $('btn-connect').disabled = false;
 });
 
@@ -1106,7 +1186,7 @@ function loadProjectSelect() {
 
 function updateProjectLabel() {
   const proj = S.projects.find(p => p.id === S.projectId);
-  $('topbar-project').textContent = proj ? `→ ${proj.name}` : '';
+  $('topbar-project').textContent = proj ? `${proj.name}` : '';
   updateStats();
 }
 
@@ -1178,12 +1258,12 @@ function updateScanBtn() {
   const btn = $('btn-scan');
   if (S.scanning) {
     btn.classList.add('active');
-    $('btn-icon').textContent = '⏹';
-    $('btn-text').textContent = 'STOP SCANNEN';
+    $('btn-icon').innerHTML = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect></svg>';
+    $('btn-text').textContent = 'Stop Scannen';
   } else {
     btn.classList.remove('active');
-    $('btn-icon').textContent = '📷';
-    $('btn-text').textContent = 'START SCANNEN';
+    $('btn-icon').innerHTML = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7V4h16v3M9 20h6a2 2 0 002-2V9H7v9a2 2 0 002 2z"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>';
+    $('btn-text').textContent = 'Start Scannen';
   }
 }
 
@@ -1232,17 +1312,17 @@ async function handleBarcode(result) {
 // ════════════════════════════════════════════
 async function addToList(name) {
   if (!S.projectId) {
-    toast('err', 'Geen project', 'Kies een Todoist project');
+    toast('err', 'Geen project', 'Kies eerst een Todoist project');
     return;
   }
 
   const ok = await addTask(name, S.projectId);
 
   if (ok) {
-    toast('ok', name, '✓ Toegevoegd aan Todoist!');
+    toast('ok', name, 'Toegevoegd aan lijst');
     saveScan(name, true);
   } else {
-    toast('err', 'Mislukt', 'Controleer je verbinding');
+    toast('err', 'Mislukt', 'Controleer je internetverbinding');
     saveScan(name, false);
   }
 }
