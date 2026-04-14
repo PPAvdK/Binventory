@@ -748,8 +748,8 @@ body::after {
         <div class="stat-label">Totaal</div>
       </div>
       <div class="stat-chip">
-        <div class="stat-num" id="stat-project">—</div>
-        <div class="stat-label">Lijst</div>
+        <div class="stat-num" id="stat-project">0 🧠</div>
+        <div class="stat-label">Onthouden</div>
       </div>
     </div>
 
@@ -856,9 +856,8 @@ function updateStats() {
   const today = S.scans.filter(s => s.date === dateKey()).length;
   $('stat-today').textContent = today;
   $('stat-total').textContent = S.scans.length;
-  const proj = S.projects.find(p => p.id === S.projectId);
-  const name = proj?.name || '—';
-  $('stat-project').textContent = name.length > 5 ? name.slice(0,5)+'…' : name;
+  const cacheSize = Object.keys(getCache()).length;
+  $('stat-project').textContent = cacheSize + ' 🧠';
 }
 
 function renderScans() {
@@ -911,19 +910,79 @@ async function addTask(content, projectId) {
 }
 
 // ════════════════════════════════════════════
-//  OPEN FOOD FACTS
+//  OPEN FOOD FACTS — met slimme fallback
 // ════════════════════════════════════════════
+
+// Lokale cache: barcode → naam (blijft bewaard op telefoon)
+const CACHE_KEY = 'bs_barcode_cache';
+function getCache() {
+  try { return JSON.parse(localStorage.getItem(CACHE_KEY) || '{}'); } 
+  catch { return {}; }
+}
+function saveToCache(code, name) {
+  const cache = getCache();
+  cache[code] = { name, ts: Date.now() };
+  localStorage.setItem(CACHE_KEY, JSON.stringify(cache));
+}
+function getFromCache(code) {
+  const cache = getCache();
+  return cache[code]?.name || null;
+}
+
 async function lookupBarcode(code) {
+  // Stap 1: check lokale cache
+  const cached = getFromCache(code);
+  if (cached) {
+    console.log('Cache hit:', code, '→', cached);
+    return cached;
+  }
+
+  // Stap 2: Open Food Facts
   try {
-    const r = await fetch(`https://world.openfoodfacts.org/api/v0/product/${code}.json`);
+    const r = await fetch(
+      `https://world.openfoodfacts.org/api/v2/product/${code}?fields=product_name_nl,product_name,brands,quantity`,
+      { headers: { 'User-Agent': 'BinScan/1.0 (boodschappenscanner)' } }
+    );
     const d = await r.json();
-    if (d.status !== 1) return null;
-    const p = d.product;
-    const name = (p.product_name_nl || p.product_name || '').trim();
-    const brand = (p.brands || '').split(',')[0].trim();
-    if (!name) return null;
-    return brand ? `${name} (${brand})` : name;
-  } catch { return null; }
+
+    if (d.status === 1 && d.product) {
+      const p = d.product;
+      // Probeer Nederlandse naam eerst, dan Engels
+      const name = (
+        p.product_name_nl ||
+        p.product_name ||
+        ''
+      ).trim();
+
+      const brand = (p.brands || '').split(',')[0].trim();
+      const qty   = (p.quantity || '').trim();
+
+      if (name) {
+        // Bouw een mooie naam op
+        let fullName = name;
+        if (brand && !name.toLowerCase().includes(brand.toLowerCase())) {
+          fullName = `${name} (${brand})`;
+        }
+        if (qty) fullName = `${fullName} ${qty}`;
+
+        // Sla op in cache voor volgende keer
+        saveToCache(code, fullName);
+        return fullName;
+      }
+    }
+  } catch(e) {
+    console.warn('Open Food Facts fout:', e.message);
+  }
+
+  // Niet gevonden
+  return null;
+}
+
+// Cache statistieken tonen
+function getCacheStats() {
+  const cache = getCache();
+  const keys = Object.keys(cache);
+  return { total: keys.length, barcodes: keys };
 }
 
 // ════════════════════════════════════════════
@@ -1110,7 +1169,13 @@ async function handleBarcode(result) {
 
   if (navigator.vibrate) navigator.vibrate(100);
 
-  toast('loading', 'Opzoeken...', code);
+  // Check cache eerst (direct feedback)
+  const cached = getFromCache(code);
+  if (cached) {
+    toast('loading', '⚡ ' + cached, 'Uit geheugen...');
+  } else {
+    toast('loading', 'Opzoeken...', code);
+  }
 
   const name = await lookupBarcode(code);
 
@@ -1154,6 +1219,11 @@ $('modal-add').addEventListener('click', async () => {
   const name = $('modal-input').value.trim();
   if (!name) return;
   $('modal').classList.remove('open');
+  // Sla handmatig ingevoerde naam op in cache
+  if (S.pendingCode) {
+    saveToCache(S.pendingCode, name);
+    console.log('Handmatig opgeslagen in cache:', S.pendingCode, '→', name);
+  }
   await addToList(name);
 });
 
